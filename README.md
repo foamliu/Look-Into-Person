@@ -12,7 +12,7 @@ This repository is to do Indoor Semantic Segmentation with SegNet.
 
 ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/dataset.png)
 
-Follow the [instruction](http://sysu-hcp.net/lip/index.php) to download Look-Into_Person dataset.
+Follow the [instruction](http://sysu-hcp.net/lip/index.php) to download Look-Into-Person dataset.
 
 ## Architecture
 
