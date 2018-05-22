@@ -39,8 +39,8 @@ def to_bgr(y_pred):
 def random_choice(image_size):
     height, width = image_size
     crop_height, crop_width = 320, 320
-    x = random.randint(0, width - crop_width)
-    y = random.randint(0, height - crop_height)
+    x = random.randint(0, max(0, width - crop_width))
+    y = random.randint(0, max(0, height - crop_height))
     return x, y
 
 
