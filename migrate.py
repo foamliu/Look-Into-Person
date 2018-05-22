@@ -1,7 +1,7 @@
 import keras.backend as K
 import numpy as np
 
-from depth_model import build_encoder_decoder
+from model import build_encoder_decoder
 from vgg16 import vgg16_model
 
 
