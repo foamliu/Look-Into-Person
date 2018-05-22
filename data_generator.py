@@ -36,16 +36,16 @@ def to_bgr(y_pred):
     return ret
 
 
-def random_choice(image_size, crop_size):
+def random_choice(image_size):
     height, width = image_size
-    crop_height, crop_width = crop_size
+    crop_height, crop_width = 320, 320
     x = random.randint(0, width - crop_width)
     y = random.randint(0, height - crop_height)
     return x, y
 
 
-def safe_crop(mat, x, y, crop_size):
-    crop_height, crop_width = crop_size
+def safe_crop(mat, x, y):
+    crop_height, crop_width = 320, 320
     if len(mat.shape) == 2:
         ret = np.zeros((crop_height, crop_width), np.float32)
     else:
@@ -53,8 +53,6 @@ def safe_crop(mat, x, y, crop_size):
     crop = mat[y:y + crop_height, x:x + crop_width]
     h, w = crop.shape[:2]
     ret[0:h, 0:w] = crop
-    if crop_size != (320, 320):
-        ret = cv.resize(ret, dsize=(img_rows, img_cols), interpolation=cv.INTER_CUBIC)
     return ret
 
 
@@ -83,12 +81,12 @@ def data_gen(usage):
             image_size = image.shape[:2]
             category = get_category(categories_folder, name)
 
-            different_sizes = [(320, 320), (480, 480), (640, 640)]
-            crop_size = random.choice(different_sizes)
+            # different_sizes = [(320, 320), (480, 480), (640, 640)]
+            # crop_size = random.choice(different_sizes)
 
-            x, y = random_choice(image_size, crop_size)
-            image = safe_crop(image, x, y, crop_size)
-            category = safe_crop(category, x, y, crop_size)
+            x, y = random_choice(image_size)
+            image = safe_crop(image, x, y)
+            category = safe_crop(category, x, y)
 
             if np.random.random_sample() > 0.5:
                 image = np.fliplr(image)
