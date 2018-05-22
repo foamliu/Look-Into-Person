@@ -10,23 +10,13 @@ This repository is to do Indoor Semantic Segmentation with SegNet.
 
 ## Dataset
 
-![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/dataset.png)
+![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/dataset.png)
 
-Follow the [instruction](http://buildingparser.stanford.edu/dataset.html#overview) to download 2D-3D-S dataset.
-
-```bash
-$ wget https://storage.googleapis.com/3dsemantics/noXYZ/area_1_no_xyz.tar
-$ wget https://storage.googleapis.com/3dsemantics/noXYZ/area_2_no_xyz.tar
-$ wget https://storage.googleapis.com/3dsemantics/noXYZ/area_3_no_xyz.tar
-$ wget https://storage.googleapis.com/3dsemantics/noXYZ/area_4_no_xyz.tar
-$ wget https://storage.googleapis.com/3dsemantics/noXYZ/area_5a_no_xyz.tar
-$ wget https://storage.googleapis.com/3dsemantics/noXYZ/area_5b_no_xyz.tar
-$ wget https://storage.googleapis.com/3dsemantics/noXYZ/area_6_no_xyz.tar
-```
+Follow the [instruction](http://sysu-hcp.net/lip/index.php) to download Look-Into_Person dataset.
 
 ## Architecture
 
-![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/segnet.png)
+![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/segnet.png)
 
 
 ## ImageNet Pretrained Models
@@ -57,13 +47,13 @@ $ python demo.py
 
 Input | GT | Output |
 |---|---|---|
-|![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/0_image.png)  | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/0_label.png) | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/0_out.png)|
-|![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/1_image.png)  | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/1_label.png) | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/1_out.png)|
-|![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/2_image.png)  | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/2_label.png) | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/2_out.png)|
-|![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/3_image.png)  | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/3_label.png) | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/3_out.png)|
-|![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/4_image.png)  | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/4_label.png) | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/4_out.png)|
-|![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/5_image.png)  | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/5_label.png) | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/5_out.png)|
-|![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/6_image.png)  | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/6_label.png) | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/6_out.png)|
-|![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/7_image.png)  | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/7_label.png) | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/7_out.png)|
-|![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/8_image.png)  | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/8_label.png) | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/8_out.png)|
-|![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/9_image.png)  | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/9_label.png) | ![image](https://github.com/foamliu/3D-Object-Detection/raw/master/images/9_out.png)|
+|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/0_image.png)  | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/0_label.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/0_out.png)|
+|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/1_image.png)  | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/1_label.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/1_out.png)|
+|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/2_image.png)  | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/2_label.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/2_out.png)|
+|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/3_image.png)  | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/3_label.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/3_out.png)|
+|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/4_image.png)  | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/4_label.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/4_out.png)|
+|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/5_image.png)  | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/5_label.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/5_out.png)|
+|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/6_image.png)  | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/6_label.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/6_out.png)|
+|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/7_image.png)  | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/7_label.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/7_out.png)|
+|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/8_image.png)  | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/8_label.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/8_out.png)|
+|![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/9_image.png)  | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/9_label.png) | ![image](https://github.com/foamliu/Look-Into-Person/raw/master/images/9_out.png)|
