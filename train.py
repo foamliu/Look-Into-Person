@@ -32,8 +32,9 @@ if __name__ == '__main__':
         model = build_encoder_decoder()
         migrate.migrate_model(model)
 
+    sgd = keras.optimizers.SGD(lr=0.001, momentum=0.9, decay=0.0005, nesterov=True)
     decoder_target = tf.placeholder(dtype='int32', shape=(None, None, None))
-    model.compile(optimizer='nadam', loss=sparse_cross_entropy, target_tensors=[decoder_target])
+    model.compile(optimizer=sgd, loss=sparse_cross_entropy, target_tensors=[decoder_target])
 
     print(model.summary())
 

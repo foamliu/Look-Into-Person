@@ -1,4 +1,5 @@
 import tensorflow as tf
+import cv2 as cv
 
 
 def sparse_cross_entropy(y_true, y_pred):
@@ -26,3 +27,9 @@ def sparse_cross_entropy(y_true, y_pred):
     loss_mean = tf.reduce_mean(loss)
 
     return loss_mean
+
+
+def draw_str(dst, target, s):
+    x, y = target
+    cv.putText(dst, s, (x + 1, y + 1), cv.FONT_HERSHEY_PLAIN, 1.0, (0, 0, 0), thickness=2, lineType=cv.LINE_AA)
+    cv.putText(dst, s, (x, y), cv.FONT_HERSHEY_PLAIN, 1.0, (255, 255, 255), lineType=cv.LINE_AA)
