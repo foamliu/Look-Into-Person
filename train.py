@@ -8,7 +8,7 @@ import migrate
 from config import patience, epochs, num_train_samples, num_valid_samples, batch_size
 from data_generator import train_gen, valid_gen
 from model import build_encoder_decoder
-from utils import sparse_cross_entropy
+from utils import get_available_cpus, sparse_cross_entropy
 
 if __name__ == '__main__':
     # Parse arguments
@@ -50,5 +50,5 @@ if __name__ == '__main__':
                         verbose=1,
                         callbacks=callbacks,
                         use_multiprocessing=True,
-                        workers=4
+                        workers=int(get_available_cpus() * 0.80)
                         )
