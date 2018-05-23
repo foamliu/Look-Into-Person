@@ -26,7 +26,7 @@ class Unpooling(Layer):
         together = Concatenate(axis=1)([origReshaped, xReshaped])
 
         bool_mask = Lambda(lambda t: K.greater_equal(t[:, 0], t[:, 1]),
-                           output_shape=(the_shape[1], the_shape[2], the_shape[3]))(together)
+                           output_shape=the_shape[1:])(together)
         mask = Lambda(lambda t: K.cast(t, dtype='float32'))(bool_mask)
 
         x = Multiply()([mask, x])
