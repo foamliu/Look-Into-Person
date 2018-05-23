@@ -19,6 +19,7 @@ def build_encoder_decoder():
     x = ZeroPadding2D((1, 1))(x)
     x = Conv2D(64, (kernel, kernel), activation='relu', name='conv1_2')(x)
     orig_1 = x
+    print('orig_1.shape: ' + str(K.int_shape(orig_1)))
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
     x = ZeroPadding2D((1, 1))(x)
@@ -26,6 +27,7 @@ def build_encoder_decoder():
     x = ZeroPadding2D((1, 1))(x)
     x = Conv2D(128, (kernel, kernel), activation='relu', name='conv2_2')(x)
     orig_2 = x
+    print('orig_2.shape: ' + str(K.int_shape(orig_2)))
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
     x = ZeroPadding2D((1, 1))(x)
@@ -35,6 +37,7 @@ def build_encoder_decoder():
     x = ZeroPadding2D((1, 1))(x)
     x = Conv2D(256, (kernel, kernel), activation='relu', name='conv3_3')(x)
     orig_3 = x
+    print('orig_3.shape: ' + str(K.int_shape(orig_3)))
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
     x = ZeroPadding2D((1, 1))(x)
@@ -44,6 +47,7 @@ def build_encoder_decoder():
     x = ZeroPadding2D((1, 1))(x)
     x = Conv2D(512, (kernel, kernel), activation='relu', name='conv4_3')(x)
     orig_4 = x
+    print('orig_4.shape: ' + str(K.int_shape(orig_4)))
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
     x = ZeroPadding2D((1, 1))(x)
@@ -53,10 +57,12 @@ def build_encoder_decoder():
     x = ZeroPadding2D((1, 1))(x)
     x = Conv2D(512, (kernel, kernel), activation='relu', name='conv5_3')(x)
     orig_5 = x
+    print('orig_5.shape: ' + str(K.int_shape(orig_5)))
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
     # Decoder
     x = UpSampling2D(size=(2, 2))(x)
+    print('x_5.shape: ' + str(K.int_shape(x)))
     x = Unpooling(orig_5)(x)
     x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', name='deconv5_1',
                kernel_initializer='he_normal',
