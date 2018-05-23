@@ -36,28 +36,21 @@ if __name__ == '__main__':
             fmt = checkpoint_models_path + 'model.%02d-%.4f.hdf5'
             self.model_to_save.save(fmt % (epoch, logs['val_loss']))
 
+    if pretrained_path is not None:
+        model = build_encoder_decoder()
+        model.load_weights(pretrained_path)
+    else:
+        model = build_encoder_decoder()
+        migrate.migrate_model(model)
 
     # Load our model, added support for Multi-GPUs
     num_gpu = len(get_available_gpus())
     if num_gpu >= 2:
-        with tf.device("/cpu:0"):
-            if pretrained_path is not None:
-                model = build_encoder_decoder()
-                model.load_weights(pretrained_path)
-            else:
-                model = build_encoder_decoder()
-                migrate.migrate_model(model)
-
-        new_model = multi_gpu_model(model, gpus=num_gpu)
+        new_model = multi_gpu_model(model, gpus=num_gpu, cpu_relocation=True)
         # rewrite the callback: saving through the original model and not the multi-gpu model.
         model_checkpoint = MyCbk(model)
     else:
-        if pretrained_path is not None:
-            new_model = build_encoder_decoder()
-            new_model.load_weights(pretrained_path)
-        else:
-            new_model = build_encoder_decoder()
-            migrate.migrate_model(new_model)
+        new_model = model
 
     sgd = keras.optimizers.SGD(lr=0.001, momentum=0.9, decay=0.0005, nesterov=True)
     decoder_target = tf.placeholder(dtype='int32', shape=(None, None, None))
