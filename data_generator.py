@@ -2,6 +2,7 @@ import numpy as np
 import os
 import cv2 as cv
 import random
+from keras.utils import Sequence
 from config import batch_size, img_rows, img_cols, num_classes, color_map
 
 train_images_folder = 'data/instance-level_human_parsing/Training/Images'
@@ -56,30 +57,88 @@ def safe_crop(mat, x, y):
     return ret
 
 
-def data_gen(usage):
-    if usage == 'train':
-        id_file = 'data/instance-level_human_parsing/Training/train_id.txt'
-        images_folder = train_images_folder
-        categories_folder = train_categories_folder
-    else:
-        id_file = 'data/instance-level_human_parsing/Validation/val_id.txt'
-        images_folder = valid_images_folder
-        categories_folder = valid_categories_folder
+# def data_gen(usage):
+#     if usage == 'train':
+#         id_file = 'data/instance-level_human_parsing/Training/train_id.txt'
+#         images_folder = train_images_folder
+#         categories_folder = train_categories_folder
+#     else:
+#         id_file = 'data/instance-level_human_parsing/Validation/val_id.txt'
+#         images_folder = valid_images_folder
+#         categories_folder = valid_categories_folder
+#
+#     with open(id_file, 'r') as f:
+#         names = f.read().splitlines()
+#     i = 0
+#     np.random.shuffle(names)
+#     while True:
+#         batch_x = np.empty((batch_size, img_rows, img_cols, 3), dtype=np.float32)
+#         batch_y = np.empty((batch_size, img_rows, img_cols), dtype=np.int32)
+#
+#         for i_batch in range(batch_size):
+#             name = names[i]
+#             filename = os.path.join(images_folder, name + '.jpg')
+#             image = cv.imread(filename)
+#             image_size = image.shape[:2]
+#             category = get_category(categories_folder, name)
+#
+#             # different_sizes = [(320, 320), (480, 480), (640, 640)]
+#             # crop_size = random.choice(different_sizes)
+#
+#             x, y = random_choice(image_size)
+#             image = safe_crop(image, x, y)
+#             category = safe_crop(category, x, y)
+#
+#             if np.random.random_sample() > 0.5:
+#                 image = np.fliplr(image)
+#                 category = np.fliplr(category)
+#
+#             x = image / 255.
+#             y = get_y(category)
+#
+#             batch_x[i_batch, :, :, 0:3] = x
+#             batch_y[i_batch, :, :] = y
+#
+#             i += 1
+#             if i >= len(names):
+#                 i = 0
+#                 np.random.shuffle(names)
+#
+#         yield batch_x, batch_y
 
-    with open(id_file, 'r') as f:
-        names = f.read().splitlines()
-    i = 0
-    np.random.shuffle(names)
-    while True:
+
+class DataGenSequence(Sequence):
+    def __init__(self, usage):
+        self.usage = usage
+
+        if usage == 'train':
+            id_file = 'data/instance-level_human_parsing/Training/train_id.txt'
+            self.images_folder = train_images_folder
+            self.categories_folder = train_categories_folder
+        else:
+            id_file = 'data/instance-level_human_parsing/Validation/val_id.txt'
+            self.images_folder = valid_images_folder
+            self.categories_folder = valid_categories_folder
+
+        with open(id_file, 'r') as f:
+            self.names = f.read().splitlines()
+
+        np.random.shuffle(self.names)
+
+    def __len__(self):
+        return int(np.ceil(len(self.x) / float(batch_size)))
+
+    def __getitem__(self, idx):
         batch_x = np.empty((batch_size, img_rows, img_cols, 3), dtype=np.float32)
         batch_y = np.empty((batch_size, img_rows, img_cols), dtype=np.int32)
 
+        i = idx * batch_size
         for i_batch in range(batch_size):
-            name = names[i]
-            filename = os.path.join(images_folder, name + '.jpg')
+            name = self.names[i]
+            filename = os.path.join(self.images_folder, name + '.jpg')
             image = cv.imread(filename)
             image_size = image.shape[:2]
-            category = get_category(categories_folder, name)
+            category = get_category(self.categories_folder, name)
 
             # different_sizes = [(320, 320), (480, 480), (640, 640)]
             # crop_size = random.choice(different_sizes)
@@ -99,16 +158,16 @@ def data_gen(usage):
             batch_y[i_batch, :, :] = y
 
             i += 1
-            if i >= len(names):
-                i = 0
-                np.random.shuffle(names)
 
-        yield batch_x, batch_y
+        return batch_x, batch_y
+
+    def on_epoch_end(self):
+        np.random.shuffle(self.names)
 
 
 def train_gen():
-    return data_gen('train')
+    return DataGenSequence('train')
 
 
 def valid_gen():
-    return data_gen('valid')
+    return DataGenSequence('valid')
