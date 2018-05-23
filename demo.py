@@ -9,13 +9,12 @@ import numpy as np
 from config import num_classes
 from data_generator import random_choice, safe_crop, to_bgr
 from model import build_encoder_decoder
-from utils import draw_str
 
 if __name__ == '__main__':
     img_rows, img_cols = 320, 320
     channel = 3
 
-    model_weights_path = 'models/model.08-2.3858.hdf5'
+    model_weights_path = 'models/model.03-2.5195.hdf5'
     model = build_encoder_decoder()
     model.load_weights(model_weights_path)
 
