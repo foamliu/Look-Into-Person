@@ -11,9 +11,10 @@ class Unpooling(Layer):
     def build(self, input_shape):
         super(Unpooling, self).build(input_shape)
 
-    def call(self, x, **kwargs):
+    def call(self, inputs, **kwargs):
+        x = K.squeeze(inputs[:, 1], axis=1)
         bool_mask = Lambda(lambda t: K.greater_equal(t[:, 0], t[:, 1]),
-                           output_shape=K.int_shape(x)[2:])(x)
+                           output_shape=K.int_shape(x)[1:])(inputs)
         mask = Lambda(lambda t: K.cast(t, dtype='float32'))(bool_mask)
 
         x = Multiply()([mask, x])
