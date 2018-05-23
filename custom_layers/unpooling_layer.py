@@ -24,4 +24,4 @@ class Unpooling(Layer):
         return x
 
     def compute_output_shape(self, input_shape):
-        return input_shape
+        return input_shape[0], input_shape[2], input_shape[3], input_shape[4]
