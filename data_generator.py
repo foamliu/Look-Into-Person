@@ -126,22 +126,21 @@ class DataGenSequence(Sequence):
         np.random.shuffle(self.names)
 
     def __len__(self):
-        return int(np.ceil(len(self.x) / float(batch_size)))
+        return int(np.ceil(len(self.names) / float(batch_size)))
 
     def __getitem__(self, idx):
-        batch_x = np.empty((batch_size, img_rows, img_cols, 3), dtype=np.float32)
-        batch_y = np.empty((batch_size, img_rows, img_cols), dtype=np.int32)
-
         i = idx * batch_size
-        for i_batch in range(batch_size):
+
+        length = min(batch_size, (len(self.names) - i))
+        batch_x = np.empty((length, img_rows, img_cols, 3), dtype=np.float32)
+        batch_y = np.empty((length, img_rows, img_cols), dtype=np.int32)
+
+        for i_batch in range(length):
             name = self.names[i]
             filename = os.path.join(self.images_folder, name + '.jpg')
             image = cv.imread(filename)
             image_size = image.shape[:2]
             category = get_category(self.categories_folder, name)
-
-            # different_sizes = [(320, 320), (480, 480), (640, 640)]
-            # crop_size = random.choice(different_sizes)
 
             x, y = random_choice(image_size)
             image = safe_crop(image, x, y)
