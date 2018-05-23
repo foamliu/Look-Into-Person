@@ -12,7 +12,7 @@ class Unpooling(Layer):
         super(Unpooling, self).build(input_shape)
 
     def call(self, inputs, **kwargs):
-        x = K.squeeze(inputs[:, 1], axis=1)
+        x = inputs[:, 1]
         bool_mask = Lambda(lambda t: K.greater_equal(t[:, 0], t[:, 1]),
                            output_shape=K.int_shape(x)[1:])(inputs)
         mask = Lambda(lambda t: K.cast(t, dtype='float32'))(bool_mask)
