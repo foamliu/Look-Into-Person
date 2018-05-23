@@ -18,14 +18,16 @@ def build_encoder_decoder():
     x = Conv2D(64, (kernel, kernel), activation='relu', name='conv1_1')(x)
     x = ZeroPadding2D((1, 1))(x)
     x = Conv2D(64, (kernel, kernel), activation='relu', name='conv1_2')(x)
-    orig_1 = Lambda(lambda replica: replica)(x)
+    with tf.device('/gpu:0'):
+        orig_1 = x
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
     x = ZeroPadding2D((1, 1))(x)
     x = Conv2D(128, (kernel, kernel), activation='relu', name='conv2_1')(x)
     x = ZeroPadding2D((1, 1))(x)
     x = Conv2D(128, (kernel, kernel), activation='relu', name='conv2_2')(x)
-    orig_2 = Lambda(lambda replica: replica)(x)
+    with tf.device('/gpu:0'):
+        orig_2 = Lambda(lambda replica: replica)(x)
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
     x = ZeroPadding2D((1, 1))(x)
@@ -34,7 +36,8 @@ def build_encoder_decoder():
     x = Conv2D(256, (kernel, kernel), activation='relu', name='conv3_2')(x)
     x = ZeroPadding2D((1, 1))(x)
     x = Conv2D(256, (kernel, kernel), activation='relu', name='conv3_3')(x)
-    orig_3 = Lambda(lambda replica: replica)(x)
+    with tf.device('/gpu:0'):
+        orig_3 = Lambda(lambda replica: replica)(x)
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
     x = ZeroPadding2D((1, 1))(x)
@@ -43,7 +46,8 @@ def build_encoder_decoder():
     x = Conv2D(512, (kernel, kernel), activation='relu', name='conv4_2')(x)
     x = ZeroPadding2D((1, 1))(x)
     x = Conv2D(512, (kernel, kernel), activation='relu', name='conv4_3')(x)
-    orig_4 = Lambda(lambda replica: replica)(x)
+    with tf.device('/gpu:0'):
+        orig_4 = Lambda(lambda replica: replica)(x)
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
     x = ZeroPadding2D((1, 1))(x)
@@ -52,7 +56,8 @@ def build_encoder_decoder():
     x = Conv2D(512, (kernel, kernel), activation='relu', name='conv5_2')(x)
     x = ZeroPadding2D((1, 1))(x)
     x = Conv2D(512, (kernel, kernel), activation='relu', name='conv5_3')(x)
-    orig_5 = Lambda(lambda replica: replica)(x)
+    with tf.device('/gpu:0'):
+        orig_5 = Lambda(lambda replica: replica)(x)
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
     # Decoder
