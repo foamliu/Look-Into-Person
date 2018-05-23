@@ -1,8 +1,10 @@
-import numpy as np
 import os
-import cv2 as cv
 import random
+
+import cv2 as cv
+import numpy as np
 from keras.utils import Sequence
+
 from config import batch_size, img_rows, img_cols, num_classes, color_map
 
 train_images_folder = 'data/instance-level_human_parsing/Training/Images'
@@ -55,56 +57,6 @@ def safe_crop(mat, x, y):
     h, w = crop.shape[:2]
     ret[0:h, 0:w] = crop
     return ret
-
-
-# def data_gen(usage):
-#     if usage == 'train':
-#         id_file = 'data/instance-level_human_parsing/Training/train_id.txt'
-#         images_folder = train_images_folder
-#         categories_folder = train_categories_folder
-#     else:
-#         id_file = 'data/instance-level_human_parsing/Validation/val_id.txt'
-#         images_folder = valid_images_folder
-#         categories_folder = valid_categories_folder
-#
-#     with open(id_file, 'r') as f:
-#         names = f.read().splitlines()
-#     i = 0
-#     np.random.shuffle(names)
-#     while True:
-#         batch_x = np.empty((batch_size, img_rows, img_cols, 3), dtype=np.float32)
-#         batch_y = np.empty((batch_size, img_rows, img_cols), dtype=np.int32)
-#
-#         for i_batch in range(batch_size):
-#             name = names[i]
-#             filename = os.path.join(images_folder, name + '.jpg')
-#             image = cv.imread(filename)
-#             image_size = image.shape[:2]
-#             category = get_category(categories_folder, name)
-#
-#             # different_sizes = [(320, 320), (480, 480), (640, 640)]
-#             # crop_size = random.choice(different_sizes)
-#
-#             x, y = random_choice(image_size)
-#             image = safe_crop(image, x, y)
-#             category = safe_crop(category, x, y)
-#
-#             if np.random.random_sample() > 0.5:
-#                 image = np.fliplr(image)
-#                 category = np.fliplr(category)
-#
-#             x = image / 255.
-#             y = get_y(category)
-#
-#             batch_x[i_batch, :, :, 0:3] = x
-#             batch_y[i_batch, :, :] = y
-#
-#             i += 1
-#             if i >= len(names):
-#                 i = 0
-#                 np.random.shuffle(names)
-#
-#         yield batch_x, batch_y
 
 
 class DataGenSequence(Sequence):
