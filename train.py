@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
     sgd = keras.optimizers.SGD(lr=0.001, momentum=0.9, decay=0.0005, nesterov=True)
     decoder_target = tf.placeholder(dtype='int32', shape=(None, None, None))
-    new_model.compile(optimizer=sgd, loss=sparse_cross_entropy, target_tensors=[decoder_target])
+    new_model.compile(optimizer='nadam', loss=sparse_cross_entropy, target_tensors=[decoder_target])
 
     print(model.summary())
 
