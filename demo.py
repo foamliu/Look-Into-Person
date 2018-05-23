@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     for i in range(len(samples)):
         image_name = samples[i]
-        filename = os.path.join(test_images_folder, image_name)
+        filename = os.path.join(test_images_folder, image_name + '.jpg')
         image = cv.imread(filename)
         image_size = image.shape[:2]
 
