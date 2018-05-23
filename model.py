@@ -55,7 +55,7 @@ def build_encoder_decoder():
 
     # Decoder
     x = UpSampling2D(size=(2, 2))(x)
-    x = Unpooling(orig_5, (20, 20, 512))(x)
+    x = Unpooling(orig_5)(x)
     x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', name='deconv5_1', kernel_initializer='he_normal',
                bias_initializer='zeros')(x)
     x = BatchNormalization()(x)
@@ -67,7 +67,7 @@ def build_encoder_decoder():
     x = BatchNormalization()(x)
 
     x = UpSampling2D(size=(2, 2))(x)
-    x = Unpooling(orig_4, (40, 40, 512))(x)
+    x = Unpooling(orig_4)(x)
     x = Conv2D(256, (kernel, kernel), activation='relu', padding='same', name='deconv4_1', kernel_initializer='he_normal',
                bias_initializer='zeros')(x)
     x = BatchNormalization()(x)
@@ -79,7 +79,7 @@ def build_encoder_decoder():
     x = BatchNormalization()(x)
 
     x = UpSampling2D(size=(2, 2))(x)
-    x = Unpooling(orig_3, (80, 80, 256))(x)
+    x = Unpooling(orig_3)(x)
     x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='deconv3_1', kernel_initializer='he_normal',
                bias_initializer='zeros')(x)
     x = BatchNormalization()(x)
@@ -91,7 +91,7 @@ def build_encoder_decoder():
     x = BatchNormalization()(x)
 
     x = UpSampling2D(size=(2, 2))(x)
-    x = Unpooling(orig_2, (160, 160, 128))(x)
+    x = Unpooling(orig_2)(x)
     x = Conv2D(64, (kernel, kernel), activation='relu', padding='same', name='deconv2_1', kernel_initializer='he_normal',
                bias_initializer='zeros')(x)
     x = BatchNormalization()(x)
@@ -100,7 +100,7 @@ def build_encoder_decoder():
     x = BatchNormalization()(x)
 
     x = UpSampling2D(size=(2, 2))(x)
-    x = Unpooling(orig_1, (320, 320, 64))(x)
+    x = Unpooling(orig_1)(x)
     x = Conv2D(64, (kernel, kernel), activation='relu', padding='same', name='deconv1_1', kernel_initializer='he_normal',
                bias_initializer='zeros')(x)
     x = BatchNormalization()(x)
@@ -117,7 +117,6 @@ def build_encoder_decoder():
 
 if __name__ == '__main__':
     encoder_decoder = build_encoder_decoder()
-    # input_layer = model.get_layer('input')
     print(encoder_decoder.summary())
     plot_model(encoder_decoder, to_file='encoder_decoder.svg', show_layer_names=True, show_shapes=True)
 
