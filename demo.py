@@ -52,6 +52,7 @@ if __name__ == '__main__':
             os.makedirs('images')
 
         cv.imwrite('images/{}_image.png'.format(i), image)
-        cv.imwrite('images/{}_out.png'.format(i), ret)
+        cv.imwrite('images/{}_merged.png'.format(i), ret)
+        cv.imwrite('images/{}_out.png'.format(i), out)
 
     K.clear_session()
