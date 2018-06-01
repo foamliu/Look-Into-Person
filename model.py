@@ -1,6 +1,6 @@
 import keras.backend as K
 import tensorflow as tf
-from keras.layers import Input, Conv2D, UpSampling2D, BatchNormalization, ZeroPadding2D, MaxPooling2D, Reshape, Concatenate
+from keras.layers import Input, Conv2D, UpSampling2D, BatchNormalization, MaxPooling2D, Reshape, Concatenate
 from keras.models import Model
 from keras.utils import multi_gpu_model
 from keras.utils import plot_model
@@ -14,44 +14,70 @@ def build_encoder_decoder():
 
     # Encoder
     input_tensor = Input(shape=(320, 320, 3))
-    x = ZeroPadding2D((1, 1))(input_tensor)
-    x = Conv2D(64, (kernel, kernel), activation='relu', name='conv1_1')(x)
-    x = ZeroPadding2D((1, 1))(x)
-    x = Conv2D(64, (kernel, kernel), activation='relu', name='conv1_2')(x)
+    x = Conv2D(64, (kernel, kernel), activation='relu', padding='same', name='conv1_1',
+               kernel_initializer='he_normal',
+               bias_initializer='zeros')(input_tensor)
+    x = BatchNormalization()(x)
+    x = Conv2D(64, (kernel, kernel), activation='relu', padding='same', name='conv1_2',
+               kernel_initializer='he_normal',
+               bias_initializer='zeros')(x)
+    x = BatchNormalization()(x)
     orig_1 = x
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
-    x = ZeroPadding2D((1, 1))(x)
-    x = Conv2D(128, (kernel, kernel), activation='relu', name='conv2_1')(x)
-    x = ZeroPadding2D((1, 1))(x)
-    x = Conv2D(128, (kernel, kernel), activation='relu', name='conv2_2')(x)
+    x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='conv2_1',
+               kernel_initializer='he_normal',
+               bias_initializer='zeros')(x)
+    x = BatchNormalization()(x)
+    x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='conv2_2',
+               kernel_initializer='he_normal',
+               bias_initializer='zeros')(x)
+    x = BatchNormalization()(x)
     orig_2 = x
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
-    x = ZeroPadding2D((1, 1))(x)
-    x = Conv2D(256, (kernel, kernel), activation='relu', name='conv3_1')(x)
-    x = ZeroPadding2D((1, 1))(x)
-    x = Conv2D(256, (kernel, kernel), activation='relu', name='conv3_2')(x)
-    x = ZeroPadding2D((1, 1))(x)
-    x = Conv2D(256, (kernel, kernel), activation='relu', name='conv3_3')(x)
+    x = Conv2D(256, (kernel, kernel), activation='relu', padding='same', name='conv3_1',
+               kernel_initializer='he_normal',
+               bias_initializer='zeros')(x)
+    x = BatchNormalization()(x)
+    x = Conv2D(256, (kernel, kernel), activation='relu', padding='same', name='conv3_2',
+               kernel_initializer='he_normal',
+               bias_initializer='zeros')(x)
+    x = BatchNormalization()(x)
+    x = Conv2D(256, (kernel, kernel), activation='relu', padding='same', name='conv3_3',
+               kernel_initializer='he_normal',
+               bias_initializer='zeros')(x)
+    x = BatchNormalization()(x)
     orig_3 = x
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
-    x = ZeroPadding2D((1, 1))(x)
-    x = Conv2D(512, (kernel, kernel), activation='relu', name='conv4_1')(x)
-    x = ZeroPadding2D((1, 1))(x)
-    x = Conv2D(512, (kernel, kernel), activation='relu', name='conv4_2')(x)
-    x = ZeroPadding2D((1, 1))(x)
-    x = Conv2D(512, (kernel, kernel), activation='relu', name='conv4_3')(x)
+    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', name='conv4_1',
+               kernel_initializer='he_normal',
+               bias_initializer='zeros')(x)
+    x = BatchNormalization()(x)
+    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', name='conv4_2',
+               kernel_initializer='he_normal',
+               bias_initializer='zeros')(x)
+    x = BatchNormalization()(x)
+    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', name='conv4_3',
+               kernel_initializer='he_normal',
+               bias_initializer='zeros')(x)
+    x = BatchNormalization()(x)
     orig_4 = x
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
-    x = ZeroPadding2D((1, 1))(x)
-    x = Conv2D(512, (kernel, kernel), activation='relu', name='conv5_1')(x)
-    x = ZeroPadding2D((1, 1))(x)
-    x = Conv2D(512, (kernel, kernel), activation='relu', name='conv5_2')(x)
-    x = ZeroPadding2D((1, 1))(x)
-    x = Conv2D(512, (kernel, kernel), activation='relu', name='conv5_3')(x)
+    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', name='conv5_1',
+               kernel_initializer='he_normal',
+               bias_initializer='zeros')(x)
+    x = BatchNormalization()(x)
+    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', name='conv5_2',
+               kernel_initializer='he_normal',
+               bias_initializer='zeros')(x)
+    x = BatchNormalization()(x)
+    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', name='conv5_3',
+               kernel_initializer='he_normal',
+               bias_initializer='zeros')(x)
+    x = BatchNormalization()(x)
     orig_5 = x
     x = MaxPooling2D((2, 2), strides=(2, 2))(x)
 
@@ -86,11 +112,11 @@ def build_encoder_decoder():
     xReshaped = Reshape(shape)(x)
     together = Concatenate(axis=1)([origReshaped, xReshaped])
     x = Unpooling()(together)
-    x = Conv2D(256, (kernel, kernel), activation='relu', padding='same', name='deconv4_1',
+    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', name='deconv4_1',
                kernel_initializer='he_normal',
                bias_initializer='zeros')(x)
     x = BatchNormalization()(x)
-    x = Conv2D(256, (kernel, kernel), activation='relu', padding='same', name='deconv4_2',
+    x = Conv2D(512, (kernel, kernel), activation='relu', padding='same', name='deconv4_2',
                kernel_initializer='he_normal',
                bias_initializer='zeros')(x)
     x = BatchNormalization()(x)
@@ -106,11 +132,11 @@ def build_encoder_decoder():
     xReshaped = Reshape(shape)(x)
     together = Concatenate(axis=1)([origReshaped, xReshaped])
     x = Unpooling()(together)
-    x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='deconv3_1',
+    x = Conv2D(256, (kernel, kernel), activation='relu', padding='same', name='deconv3_1',
                kernel_initializer='he_normal',
                bias_initializer='zeros')(x)
     x = BatchNormalization()(x)
-    x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='deconv3_2',
+    x = Conv2D(256, (kernel, kernel), activation='relu', padding='same', name='deconv3_2',
                kernel_initializer='he_normal',
                bias_initializer='zeros')(x)
     x = BatchNormalization()(x)
@@ -126,7 +152,7 @@ def build_encoder_decoder():
     xReshaped = Reshape(shape)(x)
     together = Concatenate(axis=1)([origReshaped, xReshaped])
     x = Unpooling()(together)
-    x = Conv2D(64, (kernel, kernel), activation='relu', padding='same', name='deconv2_1',
+    x = Conv2D(128, (kernel, kernel), activation='relu', padding='same', name='deconv2_1',
                kernel_initializer='he_normal',
                bias_initializer='zeros')(x)
     x = BatchNormalization()(x)
@@ -153,8 +179,9 @@ def build_encoder_decoder():
 
     x = Conv2D(num_labels, (1, 1), activation='softmax', padding='valid', name='pred', kernel_initializer='he_normal',
                bias_initializer='zeros')(x)
+    outputs = BatchNormalization()(x)
 
-    model = Model(inputs=input_tensor, outputs=x)
+    model = Model(inputs=input_tensor, outputs=outputs, name="SegNet")
     return model
 
 
