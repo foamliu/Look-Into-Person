@@ -5,7 +5,6 @@ import tensorflow as tf
 from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 from keras.utils import multi_gpu_model
 
-import migrate
 from config import patience, epochs, num_train_samples, num_valid_samples, batch_size
 from data_generator import train_gen, valid_gen
 from model import build_encoder_decoder
@@ -41,23 +40,17 @@ if __name__ == '__main__':
     num_gpu = len(get_available_gpus())
     if num_gpu >= 2:
         with tf.device("/cpu:0"):
+            model = build_encoder_decoder()
             if pretrained_path is not None:
-                model = build_encoder_decoder()
                 model.load_weights(pretrained_path)
-            else:
-                model = build_encoder_decoder()
-                migrate.migrate_model(model)
 
         new_model = multi_gpu_model(model, gpus=num_gpu)
         # rewrite the callback: saving through the original model and not the multi-gpu model.
         model_checkpoint = MyCbk(model)
     else:
+        new_model = build_encoder_decoder()
         if pretrained_path is not None:
-            new_model = build_encoder_decoder()
             new_model.load_weights(pretrained_path)
-        else:
-            new_model = build_encoder_decoder()
-            migrate.migrate_model(new_model)
 
     # sgd = keras.optimizers.SGD(lr=0.001, momentum=0.9, decay=0.0005, nesterov=True)
     decoder_target = tf.placeholder(dtype='int32', shape=(None, None, None))
