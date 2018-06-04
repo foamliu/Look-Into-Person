@@ -20,6 +20,8 @@ if __name__ == '__main__':
 
     print(model.summary())
 
+    class_weights = np.load('median_class_weights.npy')
+
     test_images_folder = 'data/instance-level_human_parsing/Testing/Images'
     id_file = 'data/instance-level_human_parsing/Testing/test_id.txt'
     with open(id_file, 'r') as f:
@@ -42,6 +44,7 @@ if __name__ == '__main__':
 
         out = model.predict(x_test)
         out = np.reshape(out, (img_rows, img_cols, num_classes))
+        out = np.multiply(out, class_weights)
         out = np.argmax(out, axis=2)
         out = to_bgr(out)
 
