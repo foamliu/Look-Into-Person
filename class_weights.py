@@ -42,7 +42,7 @@ if __name__ == '__main__':
     print("##########################")
 
     # normalize on median freuqncy
-    med_frequ = np.median(lbl_counts.values())
+    med_frequ = np.median(list(lbl_counts.values()))
     lbl_weights = {}
     for k in lbl_counts:
         lbl_weights[k] = med_frequ / lbl_counts[k]
@@ -73,6 +73,7 @@ if __name__ == '__main__':
     print("  }")
     print("########################################################")
 
+    print('Saving as a NPY file.')
     weights = []
     for k in range(max_class_id):
         weights.append(lbl_weights[k])
