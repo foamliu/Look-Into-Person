@@ -56,7 +56,7 @@ if __name__ == '__main__':
     # class weight for classes that are not present in labeled image
     missing_class_weight = 100000
 
-    max_class_id = np.max(lbl_weights.keys()) + 1
+    max_class_id = np.max(list(lbl_weights.keys())) + 1
 
     # print formated output for caffe prototxt
     print("########################################################")
