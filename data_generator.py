@@ -4,28 +4,19 @@ import random
 import cv2 as cv
 import numpy as np
 from keras.utils import Sequence
-
+from keras.utils import to_categorical
 from config import batch_size, img_rows, img_cols, num_classes, color_map
 
 train_images_folder = 'data/instance-level_human_parsing/Training/Images'
-train_categories_folder = 'data/instance-level_human_parsing/Training/Categories'
+train_categories_folder = 'data/instance-level_human_parsing/Training/Category_ids'
 valid_images_folder = 'data/instance-level_human_parsing/Validation/Images'
-valid_categories_folder = 'data/instance-level_human_parsing/Validation/Categories'
+valid_categories_folder = 'data/instance-level_human_parsing/Validation/Category_ids'
 
 
 def get_category(categories_folder, name):
     filename = os.path.join(categories_folder, name + '.png')
-    semantic = cv.imread(filename)
+    semantic = cv.imread(filename, 0)
     return semantic
-
-
-def get_y(category):
-    temp = np.zeros(shape=(320, 320, num_classes), dtype=np.int32)
-    category = np.array(category).astype(np.int32)
-    for i in range(num_classes):
-        temp[:, :, i] = np.sum(np.abs(category - color_map[i]), axis=2)
-    y = np.argmin(temp, axis=2)
-    return y
 
 
 def to_bgr(y_pred):
@@ -85,7 +76,7 @@ class DataGenSequence(Sequence):
 
         length = min(batch_size, (len(self.names) - i))
         batch_x = np.empty((length, img_rows, img_cols, 3), dtype=np.float32)
-        batch_y = np.empty((length, img_rows, img_cols), dtype=np.int32)
+        batch_y = np.empty((length, img_rows, img_cols, num_classes), dtype=np.float32)
 
         for i_batch in range(length):
             name = self.names[i]
@@ -103,10 +94,10 @@ class DataGenSequence(Sequence):
                 category = np.fliplr(category)
 
             x = image / 255.
-            y = get_y(category)
+            y = category
 
             batch_x[i_batch, :, :, 0:3] = x
-            batch_y[i_batch, :, :] = y
+            batch_y[i_batch, :, :] = to_categorical(y, num_classes)
 
             i += 1
 

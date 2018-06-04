@@ -3,3 +3,4 @@ __pycache__/
 custom_layers/__pycache__/
 data/
 models/
+logs/
