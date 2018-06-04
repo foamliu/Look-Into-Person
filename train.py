@@ -56,7 +56,7 @@ if __name__ == '__main__':
     decoder_target = tf.placeholder(dtype='float32', shape=(None, None, None, None))
     new_model.compile(optimizer='nadam', loss=cross_entropy, target_tensors=[decoder_target])
 
-    print(model.summary())
+    print(new_model.summary())
 
     # Final callbacks
     callbacks = [tensor_board, model_checkpoint, early_stop, reduce_lr]
