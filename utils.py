@@ -10,7 +10,7 @@ class_weights = np.load('median_class_weights.npy')
 
 def cross_entropy(y_true, y_pred):
     labels = y_true
-    weighted_logits = tf.mul(y_pred, class_weights)
+    weighted_logits = tf.multiply(y_pred, class_weights)
     loss = tf.nn.softmax_cross_entropy_with_logits(labels=labels,
                                                    logits=weighted_logits)
     loss_mean = tf.reduce_mean(loss)
