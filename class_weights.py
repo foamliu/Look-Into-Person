@@ -6,7 +6,7 @@ from console_progressbar import ProgressBar
 
 if __name__ == '__main__':
     train_images_folder = 'data/instance-level_human_parsing/Training/Images'
-    train_categories_folder = 'data/instance-level_human_parsing/Training/Categories'
+    train_categories_folder = 'data/instance-level_human_parsing/Training/Category_ids'
     id_file = 'data/instance-level_human_parsing/Training/train_id.txt'
     with open(id_file, 'r') as f:
         names = f.read().splitlines()
@@ -32,12 +32,12 @@ if __name__ == '__main__':
         pb.print_progress_bar(i + 1)
 
     # normalize on training set
-    for k in lbl_counts:
+    for k in lbl_counts.keys():
         lbl_counts[k] /= num_samples
 
     print("##########################")
     print("class probability:")
-    for k in lbl_counts:
+    for k in lbl_counts.keys():
         print("%i: %f" % (k, lbl_counts[k]))
     print("##########################")
 
