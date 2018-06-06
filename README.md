@@ -1,6 +1,6 @@
 # Look Into Person
 
-This repository is to do Indoor Semantic Segmentation with SegNet.
+This repository is to do Human Parsing with SegNet.
 
 ## Dependencies
 - [NumPy](http://docs.scipy.org/doc/numpy-1.10.1/user/install.html)
