@@ -25,7 +25,7 @@ def cross_entropy(y_true, y_pred):
     cross_ent = K.categorical_crossentropy(y_pred, y_true)
     cross_ent = K.mean(cross_ent, axis=-1)
 
-    return -cross_ent
+    return cross_ent
 
 
 # getting the number of GPUs
