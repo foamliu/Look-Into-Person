@@ -3,6 +3,7 @@ import os
 import cv2 as cv
 import matplotlib.pylab as plt
 import numpy as np
+from console_progressbar import ProgressBar
 from scipy.interpolate import interp1d
 from scipy.signal import gaussian, convolve
 
@@ -14,11 +15,13 @@ def compute_color_prior(do_plot=False):
     names = [f for f in os.listdir(categories_folder) if f.lower().endswith('.png')]
     num_samples = len(names)
     ind = np.array([])
+    pb = ProgressBar(total=num_samples, prefix='Compute color prior', suffix='', decimals=3, length=50, fill='=')
     for i in range(num_samples):
         name = names[i]
         filename = os.path.join(categories_folder, name)
         category = np.ravel(cv.imread(filename, 0))
         ind = np.append(ind, category)
+        pb.print_progress_bar(i + 1)
 
     # We now count the number of occurrences of each class
     counts = np.bincount(ind)
