@@ -12,20 +12,20 @@ prior_factor = prior_factor.astype(np.float32)
 
 
 def cross_entropy(y_true, y_pred):
-    # y_true = K.reshape(y_true, (-1, num_classes))
-    # y_pred = K.reshape(y_pred, (-1, num_classes))
-    #
-    # idx_max = K.argmax(y_true, axis=1)
-    # weights = K.gather(prior_factor, idx_max)
-    # weights = K.reshape(weights, (-1, 1))
-    #
-    # # multiply y_true by weights
-    # y_true = y_true * weights
+    y_true = K.reshape(y_true, (-1, num_classes))
+    y_pred = K.reshape(y_pred, (-1, num_classes))
+
+    idx_max = K.argmax(y_true, axis=1)
+    weights = K.gather(prior_factor, idx_max)
+    weights = K.reshape(weights, (-1, 1))
+
+    # multiply y_true by weights
+    y_true = y_true * weights
 
     cross_ent = K.categorical_crossentropy(y_pred, y_true)
-    # cross_ent = K.mean(cross_ent, axis=-1)
+    cross_ent = K.mean(cross_ent, axis=-1)
 
-    return cross_ent
+    return -cross_ent
 
 
 # getting the number of GPUs
