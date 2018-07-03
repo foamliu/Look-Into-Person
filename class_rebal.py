@@ -13,7 +13,7 @@ def compute_color_prior(do_plot=False):
     categories_folder = 'data/instance-level_human_parsing/Training/Category_ids'
     names = [f for f in os.listdir(categories_folder) if f.lower().endswith('.png')]
     num_samples = len(names)
-    ind = np.array()
+    ind = np.array([])
     for i in range(num_samples):
         name = names[i]
         filename = os.path.join(categories_folder, name)
