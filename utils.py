@@ -2,19 +2,30 @@ import multiprocessing
 
 import cv2 as cv
 import numpy as np
-import tensorflow as tf
+import keras.backend as K
 from tensorflow.python.client import device_lib
+from config import num_classes
 
-class_weights = np.load('median_class_weights.npy')
+# Load the color prior factor that encourages rare classes
+prior_factor = np.load("data/prior_factor.npy")
+prior_factor = prior_factor.astype(np.float32)
 
 
 def cross_entropy(y_true, y_pred):
-    labels = y_true
-    weighted_logits = tf.multiply(y_pred, class_weights)
-    loss = tf.nn.softmax_cross_entropy_with_logits(labels=labels,
-                                                   logits=weighted_logits)
-    loss_mean = tf.reduce_mean(loss)
-    return loss_mean
+    y_true = K.reshape(y_true, (-1, num_classes))
+    y_pred = K.reshape(y_pred, (-1, num_classes))
+
+    idx_max = K.argmax(y_true, axis=1)
+    weights = K.gather(prior_factor, idx_max)
+    weights = K.reshape(weights, (-1, 1))
+
+    # multiply y_true by weights
+    y_true = y_true * weights
+
+    cross_ent = K.categorical_crossentropy(y_pred, y_true)
+    cross_ent = K.mean(cross_ent, axis=-1)
+
+    return cross_ent
 
 
 # getting the number of GPUs
