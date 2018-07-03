@@ -23,7 +23,7 @@ def cross_entropy(y_true, y_pred):
     # y_true = y_true * weights
 
     cross_ent = K.categorical_crossentropy(y_pred, y_true)
-    cross_ent = K.mean(cross_ent, axis=-1)
+    # cross_ent = K.mean(cross_ent, axis=-1)
 
     return cross_ent
 
