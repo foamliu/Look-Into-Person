@@ -10,12 +10,12 @@ from scipy.signal import gaussian, convolve
 from config import num_classes
 
 
-def compute_color_prior(do_plot=False):
+def compute_class_prior(do_plot=False):
     categories_folder = 'data/instance-level_human_parsing/Training/Category_ids'
     names = [f for f in os.listdir(categories_folder) if f.lower().endswith('.png')]
     num_samples = len(names)
     ind = np.array([])
-    pb = ProgressBar(total=num_samples, prefix='Compute color prior', suffix='', decimals=3, length=50, fill='=')
+    pb = ProgressBar(total=num_samples, prefix='Compute class prior', suffix='', decimals=3, length=50, fill='=')
     for i in range(num_samples):
         name = names[i]
         filename = os.path.join(categories_folder, name)
@@ -42,7 +42,7 @@ def compute_color_prior(do_plot=False):
         plt.show()
 
 
-def smooth_color_prior(sigma=5, do_plot=False):
+def smooth_class_prior(sigma=5, do_plot=False):
     prior_prob = np.load(os.path.join(data_dir, "prior_prob.npy"))
     # add an epsilon to prior prob to avoid 0 vakues and possible NaN
     prior_prob += 1E-3 * np.min(prior_prob)
@@ -97,6 +97,6 @@ if __name__ == '__main__':
     data_dir = 'data/'
     do_plot = True
 
-    compute_color_prior(do_plot=True)
-    smooth_color_prior(do_plot=True)
+    compute_class_prior(do_plot=True)
+    smooth_class_prior(do_plot=True)
     compute_prior_factor(do_plot=True)
