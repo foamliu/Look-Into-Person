@@ -41,6 +41,8 @@ $ tensorboard --logdir path_to_current_dir/logs
 
 ### Demo
 
+Download [pre-trained model](https://github.com/foamliu/Look-Into-Person/releases/download/v1.0/model.119-2.2473.hdf5) and put it into models folder.
+
 ```bash
 $ python demo.py
 ```
