@@ -55,6 +55,7 @@ if __name__ == '__main__':
     sgd = keras.optimizers.SGD(lr=1e-5, decay=1e-6, momentum=0.9, nesterov=True)
     # new_model.compile(optimizer='adam', loss=cross_entropy)
     # new_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    new_model.compile(optimizer=sgd, loss='categorical_crossentropy', metrics=['accuracy'])
 
     print(new_model.summary())
 
