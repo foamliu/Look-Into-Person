@@ -8,7 +8,7 @@ from keras.utils import plot_model
 from custom_layers.unpooling_layer import Unpooling
 
 
-def build_encoder_decoder():
+def build_model():
     num_labels = 20
     kernel = 3
 
@@ -173,7 +173,7 @@ def build_encoder_decoder():
 
 if __name__ == '__main__':
     with tf.device("/cpu:0"):
-        encoder_decoder = build_encoder_decoder()
+        encoder_decoder = build_model()
     print(encoder_decoder.summary())
     plot_model(encoder_decoder, to_file='encoder_decoder.svg', show_layer_names=True, show_shapes=True)
 

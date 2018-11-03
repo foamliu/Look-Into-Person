@@ -8,7 +8,7 @@ import numpy as np
 
 from config import num_classes
 from data_generator import random_choice, safe_crop, to_bgr
-from model import build_encoder_decoder
+from model import build_model
 
 if __name__ == '__main__':
     # Parse arguments
@@ -21,7 +21,7 @@ if __name__ == '__main__':
     channel = 3
 
     model_weights_path = 'models/model.54-2.2507.hdf5'
-    model = build_encoder_decoder()
+    model = build_model()
     model.load_weights(model_weights_path)
 
     print(model.summary())

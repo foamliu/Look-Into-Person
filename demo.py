@@ -8,19 +8,17 @@ import numpy as np
 
 from config import num_classes
 from data_generator import random_choice, safe_crop, to_bgr
-from model import build_encoder_decoder
+from model import build_model
+from utils import get_best_model
 
 if __name__ == '__main__':
     img_rows, img_cols = 320, 320
     channel = 3
 
-    model_weights_path = 'models/model.119-2.2473.hdf5'
-    model = build_encoder_decoder()
-    model.load_weights(model_weights_path)
+    model = build_model()
+    model.load_weights(get_best_model())
 
     print(model.summary())
-
-    class_weights = np.load('median_class_weights.npy')
 
     test_images_folder = 'data/instance-level_human_parsing/Testing/Images'
     id_file = 'data/instance-level_human_parsing/Testing/test_id.txt'
@@ -44,7 +42,6 @@ if __name__ == '__main__':
 
         out = model.predict(x_test)
         out = np.reshape(out, (img_rows, img_cols, num_classes))
-        out = np.multiply(out, class_weights)
         out = np.argmax(out, axis=2)
         out = to_bgr(out)
 

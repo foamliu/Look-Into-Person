@@ -7,7 +7,7 @@ from keras.utils import multi_gpu_model
 
 from config import patience, epochs, num_train_samples, num_valid_samples, batch_size
 from data_generator import train_gen, valid_gen
-from model import build_encoder_decoder
+from model import build_model
 from utils import get_available_cpus, get_available_gpus, cross_entropy
 
 if __name__ == '__main__':
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     num_gpu = len(get_available_gpus())
     if num_gpu >= 2:
         with tf.device("/cpu:0"):
-            model = build_encoder_decoder()
+            model = build_model()
             if pretrained_path is not None:
                 model.load_weights(pretrained_path)
 
@@ -48,7 +48,7 @@ if __name__ == '__main__':
         # rewrite the callback: saving through the original model and not the multi-gpu model.
         model_checkpoint = MyCbk(model)
     else:
-        new_model = build_encoder_decoder()
+        new_model = build_model()
         if pretrained_path is not None:
             new_model.load_weights(pretrained_path)
 
