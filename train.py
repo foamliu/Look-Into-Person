@@ -8,7 +8,7 @@ from keras.utils import multi_gpu_model
 from config import patience, epochs, num_train_samples, num_valid_samples, batch_size
 from data_generator import train_gen, valid_gen
 from model import build_model
-from utils import get_available_cpus, get_available_gpus, cross_entropy
+from utils import get_available_cpus, get_available_gpus, get_highest_acc
 
 if __name__ == '__main__':
     # Parse arguments
@@ -33,7 +33,9 @@ if __name__ == '__main__':
 
         def on_epoch_end(self, epoch, logs=None):
             fmt = checkpoint_models_path + 'model.%02d-%.4f.hdf5'
-            self.model_to_save.save(fmt % (epoch, logs['val_loss']))
+            highest_acc = get_highest_acc()
+            if float(logs['val_acc']) > highest_acc:
+                self.model_to_save.save(fmt % (epoch, logs['val_acc']))
 
 
     # Load our model, added support for Multi-GPUs
@@ -52,9 +54,9 @@ if __name__ == '__main__':
         if pretrained_path is not None:
             new_model.load_weights(pretrained_path)
 
-    adam = keras.optimizers.Adam(lr=1e-4, beta_1=0.9, beta_2=0.99, epsilon=1e-08, decay=5E-6)
-    # sgd = keras.optimizers.SGD(lr=1e-5, decay=1e-6, momentum=0.9, nesterov=True)
-    new_model.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accuracy'])
+    # adam = keras.optimizers.Adam(lr=1e-4, beta_1=0.9, beta_2=0.99, epsilon=1e-08, decay=5E-6)
+    sgd = keras.optimizers.SGD(lr=1e-5, decay=1e-6, momentum=0.9, nesterov=True)
+    new_model.compile(optimizer=sgd, loss='categorical_crossentropy', metrics=['accuracy'])
 
     print(new_model.summary())
 
