@@ -18,6 +18,9 @@ if __name__ == '__main__':
     pretrained_path = args["pretrained"]
     checkpoint_models_path = 'models/'
 
+    if pretrained_path is None:
+        pretrained_path = get_best_model()
+
     # Callbacks
     tensor_board = keras.callbacks.TensorBoard(log_dir='./logs', histogram_freq=0, write_graph=True, write_images=True)
     model_names = checkpoint_models_path + 'model.{epoch:02d}-{val_loss:.4f}.hdf5'
