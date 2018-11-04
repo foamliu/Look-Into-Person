@@ -54,8 +54,8 @@ def get_best_model():
     files = [f for f in os.listdir('models/') if p.match(f)]
     filename = None
     if len(files) > 0:
-        losses = [float(p.match(f).groups()[1]) for f in files]
-        best_index = int(np.argmin(losses))
+        accs = [float(p.match(f).groups()[1]) for f in files]
+        best_index = int(np.argmax(accs))
         filename = os.path.join('models', files[best_index])
     print('loading best model: {}'.format(filename))
     return filename
