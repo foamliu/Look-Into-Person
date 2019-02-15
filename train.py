@@ -59,8 +59,8 @@ if __name__ == '__main__':
 
     adam = keras.optimizers.Adam(lr=1e-4, beta_1=0.9, beta_2=0.99, epsilon=1e-08, decay=5E-6)
     # sgd = keras.optimizers.SGD(lr=1e-5, decay=1e-6, momentum=0.9, nesterov=True)
-    # new_model.compile(optimizer=sgd, loss='categorical_crossentropy', metrics=['accuracy'])
-    new_model.compile(optimizer=adam, loss=[focal_loss(alpha=.25, gamma=2)], metrics=['accuracy'])
+    new_model.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accuracy'])
+    # new_model.compile(optimizer=adam, loss=[focal_loss(alpha=.25, gamma=2)], metrics=['accuracy'])
 
     print(new_model.summary())
 
