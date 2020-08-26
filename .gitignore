@@ -203,5 +203,19 @@ dmypy.json
 .DS_Store
 .copyarea.db
 Thumbs.db
+*.log
 
+# eclipse files
+.settings
+.project
+.classpath
+.springBeans
+
+# ideaJ files
+*.idea
+*.iml
+out/
+
+# visual studio code files
+.vscode/
 
