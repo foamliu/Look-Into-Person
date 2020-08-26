@@ -1,0 +1,33 @@
+# normalize line endings to LF in the repository for all text files
+* text eol=lf
+
+# other text files that should be normalised (convert CRLF to LF)
+*.bat           text
+*.css           text
+*.htm           text
+*.html          text
+*.java          text
+*.js            text
+*.json          text
+*.jsp           text
+*.properties    text
+*.sh            text
+*.sql           text
+*.tld           text
+*.txt           text
+*.template      text
+*.xhtml         text
+*.xml           text
+*.xsd           text
+
+# binary files that should not be touched
+*.gif           binary
+*.ico           binary
+*.jar           binary
+*.jpg           binary
+*.jpeg          binary
+*.pdf           binary
+*.png           binary
+*.ttf           binary
+*.woff          binary
+*.woff2         binary
