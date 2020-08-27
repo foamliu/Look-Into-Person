@@ -218,4 +218,4 @@ out/
 
 # visual studio code files
 .vscode/
-
+.editorconfig
