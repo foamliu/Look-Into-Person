@@ -5,8 +5,8 @@
   "homepage": "https://github.com/sloanlipman/automatic-apparel-outliner",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "ng build --outputHashing=all --watch",
+    "build": "node --max_old_space_size=8096 ./node_modules/.bin/ng build --prod --aot --build-optimizer --vendor-chunk --output-hashing=all --named-chunks --extract-css",
     "pretty-print": "prettier --write '**/*.+(ts|scss|css|html|json)'",
     "pretty-list": "prettier --list-different '**/*.+(ts|scss|css|html|json)'",
     "test": "jest --collect-coverage --silent",
