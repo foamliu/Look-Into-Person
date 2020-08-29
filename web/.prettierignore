@@ -1,0 +1,13 @@
+**/angular.json
+**/coverage
+**/dist
+**/docs
+**/e2e/
+**/node_modules
+**/nodejs/
+**/package-lock.json
+**/reports
+**/src/main.ts
+**/src/polyfills.ts
+**/src/test.ts
+**/src/zone-flags.ts

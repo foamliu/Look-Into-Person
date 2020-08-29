@@ -7,9 +7,16 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "pretty-print": "prettier --write '**/*.+(ts|scss|css|html|json)'",
+    "pretty-list": "prettier --list-different '**/*.+(ts|scss|css|html|json)'",
     "test": "jest --collect-coverage --silent",
     "lint": "ng lint",
     "e2e": "ng e2e"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   },
   "private": true,
   "dependencies": {
@@ -30,15 +37,19 @@
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.1000.0",
     "@angular/cli": "~10.0.5",
-    "@angular/compiler-cli": "~10.0.0",
     "@angular/compiler": "~10.0.0",
+    "@angular/compiler-cli": "~10.0.0",
     "@angular/language-service": "~10.0.0",
     "@ionic/angular-toolkit": "^2.3.0",
     "@types/jest": "^26.0.10",
     "@types/node": "^12.11.1",
     "codelyzer": "^6.0.0",
-    "jest-preset-angular": "^8.3.1",
+    "husky": "^4.2.5",
     "jest": "^26.4.2",
+    "jest-preset-angular": "^8.3.1",
+    "prettier": "^2.1.1",
+    "prettier-plugin-organize-imports": "^1.1.1",
+    "pretty-quick": "^3.0.0",
     "protractor": "~7.0.0",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
