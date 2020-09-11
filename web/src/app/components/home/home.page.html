@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title> Blank </ion-title>
+    <ion-title> Automatic Apparel Outliner </ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -11,8 +11,27 @@
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <ion-grid id="container">
+    <ion-row class="image-container">
+      <ion-col>
+        <ion-item class="image">
+          <ion-label slot="start" position="stacked">Original Image</ion-label>
+          <img [src]="uploadedFile.src" id="uploaded-image" (click)="clickImage($event)" />
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item class="image">
+          <ion-label slot="start" position="stacked">Processed Image</ion-label>
+          <img src="/assets/icon/favicon.png" *ngIf="isUploadStatusNotStarted()" />
+          <ion-skeleton-text animated *ngIf="isUploadPending()" id="skeleton-text"></ion-skeleton-text>
+          <img [src]="processedImage.src" *ngIf="isUploadComplete()" />
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-button id="upload" (click)="addFiles()">Select a file</ion-button>
+    </ion-row>
+  </ion-grid>
 </ion-content>
+
+<input id="file-input" type="file" #file (change)="onFilesAdded()" accept="image/*" />

@@ -24,3 +24,13 @@
 @import '~@ionic/angular/css/text-alignment.css';
 @import '~@ionic/angular/css/text-transformation.css';
 @import '~@ionic/angular/css/flex-utils.css';
+
+html {
+  font-size: 6.25%;
+}
+
+body {
+  font-size: 16rem;
+  height: 100vh;
+  width: 100vw;
+}

@@ -1,27 +1,42 @@
-#container {
-  text-align: center;
+home {
+  overflow: scroll;
 
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
+  #container {
+    text-align: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
+    div {
+      font-size: 1rem;
+      line-height: 22px;
+      color: #0099ff;
+      margin: 0;
+    }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
+    ion-item {
+      position: relative;
+      --background: transparent;
+    }
 
-  color: #8c8c8c;
+    ion-col {
+      border: 1px white solid;
+    }
+  }
 
-  margin: 0;
-}
+  #file-input {
+    display: none;
+  }
 
-#container a {
-  text-decoration: none;
+  #upload-container {
+    min-width: 400rem;
+  }
+
+  .image {
+    background: center center no-repeat;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
 }
