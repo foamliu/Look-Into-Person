@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -20,10 +20,7 @@ export class UploadService {
     formData.append('image', image);
     const url = this.buildUrl('/upload');
 
-    let params = new HttpParams();
-    params = params.set('Content-Type', 'multipart/form-data');
-
-    return this.http.post(url, formData, { params: params }).pipe(
+    return this.http.post(url, formData).pipe(
       map((response) => {
         return response;
       })

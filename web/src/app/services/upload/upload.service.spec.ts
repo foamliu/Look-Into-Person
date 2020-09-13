@@ -35,7 +35,7 @@ describe('UploadService', () => {
     service.uploadImage(file).subscribe((response) => expect(response).toEqual(body));
     tick();
 
-    const req = httpTestingController.expectOne('/upload?Content-Type=multipart/form-data');
+    const req = httpTestingController.expectOne('/upload');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(expectedForm);
 
