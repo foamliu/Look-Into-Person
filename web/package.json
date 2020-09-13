@@ -6,7 +6,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng build --outputHashing=all --watch",
-    "build": "node --max_old_space_size=8096 ./node_modules/.bin/ng build --prod --aot --build-optimizer --vendor-chunk --output-hashing=all --named-chunks --extract-css",
+    "build": "ng build --aot --build-optimizer --vendor-chunk --output-hashing=all --named-chunks --extract-css",
+    "build-heroku": "ng build --prod --aot --build-optimizer --vendor-chunk --output-hashing=all --named-chunks --extract-css",
     "pretty-print": "prettier --write '**/*.+(ts|scss|css|html|json)'",
     "pretty-list": "prettier --list-different '**/*.+(ts|scss|css|html|json)'",
     "test": "jest --collect-coverage --silent",
@@ -20,7 +21,9 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/cli": "~10.0.5",
     "@angular/common": "~10.0.0",
+    "@angular/compiler-cli": "~10.0.0",
     "@angular/core": "~10.0.0",
     "@angular/forms": "~10.0.0",
     "@angular/platform-browser-dynamic": "~10.0.0",
@@ -36,9 +39,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.1000.0",
-    "@angular/cli": "~10.0.5",
     "@angular/compiler": "~10.0.0",
-    "@angular/compiler-cli": "~10.0.0",
     "@angular/language-service": "~10.0.0",
     "@ionic/angular-toolkit": "^2.3.0",
     "@types/jest": "^26.0.10",

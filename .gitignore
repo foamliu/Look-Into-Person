@@ -220,3 +220,11 @@ out/
 .vscode/
 .editorconfig
 node_modules
+
+# other
+share/
+bin/
+pyenv.cfg
+app/img/uploads/
+.angulardoc.json
+.fuse_*
