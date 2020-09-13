@@ -6,8 +6,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng build --outputHashing=all --watch",
-    "build": "ng build --aot --build-optimizer --vendor-chunk --output-hashing=all --named-chunks --extract-css",
-    "build-heroku": "ng build --prod --aot --build-optimizer --vendor-chunk --output-hashing=all --named-chunks --extract-css",
+    "build": "ng build --prod --aot --build-optimizer --vendor-chunk --output-hashing=all --named-chunks --extract-css",
     "pretty-print": "prettier --write '**/*.+(ts|scss|css|html|json)'",
     "pretty-list": "prettier --list-different '**/*.+(ts|scss|css|html|json)'",
     "test": "jest --collect-coverage --silent",
