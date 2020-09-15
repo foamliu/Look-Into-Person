@@ -1,20 +1,11 @@
 from flask import send_from_directory, send_file, request, json
 from app import app
-from werkzeug.utils import secure_filename
-from os.path import join, dirname, realpath
-
-UPLOAD_FOLDER = join(dirname(realpath(__file__)), 'img/uploads')
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+from app.process.seg import img_process
+from app.tools.dirs import save_upload, save_processed
 
 
 def json_response(payload, status=200):
-    return (json.dumps(payload), status, {'content-type': 'application/json'})
+    return json.dumps(payload), status, {'content-type': 'application/json'}
 
 
 @app.route('/')
@@ -23,14 +14,15 @@ def index():
     return send_file('../dist/web/index.html', 'text/html')
 
 
+# delete img after processing
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
         f = request.files['image']
-        if f and allowed_file(f.filename):
-            filename = secure_filename(f.filename)
-            f.save(join(app.config['UPLOAD_FOLDER'], filename))
-            return json_response({'success': 'true', 'filename': filename})
+        fileinfo = save_upload(f)
+        img_data = img_process(fileinfo[0])
+        pro_img = save_processed(img_data, fileinfo[1])
+        return send_file(pro_img)
 
 
 @app.route('/<path:path>')
