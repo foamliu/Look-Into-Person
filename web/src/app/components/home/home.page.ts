@@ -42,10 +42,9 @@ export class HomePage {
 
     this.uploadService.uploadImage(this.uploadedFile.file).subscribe(
       (response) => {
+        this.createImageFromBlob(response);
         this.loadingCtrl.dismiss();
         this.fileAdded = true;
-        this.processedImage.updateFile(event.target.result, file); // Eventually replace this with the actual result of the Http call
-        this.processedImage.status = UploadStatus.Completed;
       },
       (err) => {
         console.log('An error has occurred: ', err);
@@ -53,6 +52,18 @@ export class HomePage {
         this.loadingCtrl.dismiss();
       }
     );
+  }
+
+  createImageFromBlob(image: Blob) {
+    const reader = new FileReader();
+    reader.addEventListener('load', (event: any) => {
+      this.processedImage.updateFile(event.target.result, <File>image);
+      this.processedImage.status = UploadStatus.Completed;
+    });
+
+    if (image) {
+      reader.readAsDataURL(image);
+    }
   }
 
   tryToSetSkeletonTextHeight() {

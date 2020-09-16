@@ -20,7 +20,7 @@ export class UploadService {
     formData.append('image', image);
     const url = this.buildUrl('/upload');
 
-    return this.http.post(url, formData).pipe(
+    return this.http.post(url, formData, { responseType: 'blob' }).pipe(
       map((response) => {
         return response;
       })
