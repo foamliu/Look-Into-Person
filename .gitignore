@@ -228,3 +228,5 @@ pyenv.cfg
 app/img/uploads/
 .angulardoc.json
 .fuse_*
+myenv/
+app/img
