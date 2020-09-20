@@ -9,13 +9,6 @@ home {
     top: 50%;
     transform: translateY(-50%);
 
-    div {
-      font-size: 1rem;
-      line-height: 22px;
-      color: #0099ff;
-      margin: 0;
-    }
-
     ion-item {
       position: relative;
       --background: transparent;
@@ -28,10 +21,6 @@ home {
 
   #file-input {
     display: none;
-  }
-
-  #upload-container {
-    min-width: 400rem;
   }
 
   .image {
