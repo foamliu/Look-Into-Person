@@ -2,16 +2,16 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoadingController } from '@ionic/angular';
 import { throwError } from 'rxjs';
-import { UploadService } from '../../services/upload/upload.service';
+import { ImageServiceMock } from '../../../jest-mocks/image.service';
+import { ImageService } from '../../services/image/image.service';
 import { LoadingControllerMock } from './../../../jest-mocks/loading-controller';
-import { UploadServiceMock } from './../../../jest-mocks/upload.service';
 import { UploadStatus } from './../../shared/image-snippet.model';
 import { HomePage } from './home.page';
 
 describe('HomePage', () => {
   let component: HomePage;
   let fixture: ComponentFixture<HomePage>;
-  let uploadService: UploadService;
+  let imageService: ImageService;
   let loadingCtrl: LoadingController;
 
   const blob = new Blob([''], { type: 'image/png' });
@@ -30,8 +30,8 @@ describe('HomePage', () => {
       declarations: [HomePage],
       providers: [
         {
-          provide: UploadService,
-          useClass: UploadServiceMock
+          provide: ImageService,
+          useClass: ImageServiceMock
         },
         {
           provide: LoadingController,
@@ -43,7 +43,7 @@ describe('HomePage', () => {
 
     fixture = TestBed.createComponent(HomePage);
     component = fixture.componentInstance;
-    uploadService = TestBed.inject(UploadService);
+    imageService = TestBed.inject(ImageService);
     loadingCtrl = TestBed.inject(LoadingController);
   }));
 
@@ -58,7 +58,7 @@ describe('HomePage', () => {
     expect(component.uploadedFile.src).toEqual('mockFileSrc');
     expect(component.uploadedFile.file).toEqual(file);
 
-    expect(uploadService.uploadImage).toHaveBeenCalledWith(file);
+    expect(imageService.uploadImage).toHaveBeenCalledWith(file);
     expect(component.fileAdded).toBe(true);
     expect(component.processedImage.src).toEqual('mockFileSrc');
     expect(component.processedImage.file).toEqual(file);
@@ -68,12 +68,12 @@ describe('HomePage', () => {
 
   test('Should dismiss loading when upload fails', () => {
     jest.spyOn(component, 'tryToSetSkeletonTextHeight').mockImplementation();
-    jest.spyOn(uploadService, 'uploadImage').mockReturnValue(throwError('error'));
+    jest.spyOn(imageService, 'uploadImage').mockReturnValue(throwError('error'));
 
     component.uploadImage(event, file);
 
     expect(component.tryToSetSkeletonTextHeight).toHaveBeenCalled();
-    expect(uploadService.uploadImage).toHaveBeenCalledWith(file);
+    expect(imageService.uploadImage).toHaveBeenCalledWith(file);
     expect(component.fileAdded).toBe(false);
     expect(component.processedImage.src).toEqual('/assets/icon/favicon.png');
     expect(component.processedImage.file).toBeUndefined();

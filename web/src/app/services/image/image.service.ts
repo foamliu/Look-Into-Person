@@ -7,7 +7,7 @@ import { environment } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class UploadService {
+export class ImageService {
   constructor(private http: HttpClient) {}
 
   buildUrl(url: string) {

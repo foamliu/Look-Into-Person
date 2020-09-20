@@ -1,7 +1,7 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
+import { ImageService } from 'src/app/services/image/image.service';
 import { ImageSnippet, UploadStatus } from 'src/app/shared/image-snippet.model';
-import { UploadService } from '../../services/upload/upload.service';
 
 @Component({
   selector: 'home',
@@ -10,7 +10,7 @@ import { UploadService } from '../../services/upload/upload.service';
   encapsulation: ViewEncapsulation.None
 })
 export class HomePage {
-  constructor(private uploadService: UploadService, private loadingCtrl: LoadingController) {}
+  constructor(private imageService: ImageService, private loadingCtrl: LoadingController) {}
   @ViewChild('file') file: any;
   uploadedFile = new ImageSnippet();
   processedImage = new ImageSnippet();
@@ -40,7 +40,7 @@ export class HomePage {
     this.uploadedFile.updateFile(event.target.result, file);
     this.tryToSetSkeletonTextHeight();
 
-    this.uploadService.uploadImage(this.uploadedFile.file).subscribe(
+    this.imageService.uploadImage(this.uploadedFile.file).subscribe(
       (response) => {
         this.createImageFromBlob(response);
         this.loadingCtrl.dismiss();

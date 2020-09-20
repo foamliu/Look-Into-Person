@@ -1,9 +1,9 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { UploadService } from './upload.service';
+import { ImageService } from './image.service';
 
-describe('UploadService', () => {
-  let service: UploadService;
+describe('ImageService', () => {
+  let service: ImageService;
   let httpTestingController: HttpTestingController;
 
   const blob = new Blob([''], { type: 'image/png' });
@@ -14,9 +14,9 @@ describe('UploadService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [UploadService]
+      providers: [ImageService]
     });
-    service = TestBed.inject(UploadService);
+    service = TestBed.inject(ImageService);
     httpTestingController = TestBed.inject(HttpTestingController);
   });
 

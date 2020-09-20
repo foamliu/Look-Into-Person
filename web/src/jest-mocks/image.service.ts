@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 
-export class UploadServiceMock {
+export class ImageServiceMock {
   buildUrl: (url: string) => string;
   uploadImage: (image: any) => any;
 
