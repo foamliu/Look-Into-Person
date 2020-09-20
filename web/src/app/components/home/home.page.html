@@ -16,13 +16,13 @@
       <ion-col>
         <ion-item class="image">
           <ion-label slot="start" position="stacked">Original Image</ion-label>
-          <img [src]="uploadedFile.src" (click)="clickImage($event)" />
+          <img [src]="originalImage.getSrc()" (click)="clickImage($event)" />
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item class="image">
           <ion-label slot="start" position="stacked">Processed Image</ion-label>
-          <img [src]="processedImage.src" />
+          <img [src]="processedImage.getSrc()" />
         </ion-item>
       </ion-col>
     </ion-row>

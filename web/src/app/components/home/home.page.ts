@@ -1,5 +1,5 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
-import { LoadingController } from '@ionic/angular';
+import { LoadingController, ToastController } from '@ionic/angular';
 import { ImageService } from 'src/app/services/image/image.service';
 import { ImageSnippet } from 'src/app/shared/image-snippet.model';
 
@@ -10,11 +10,10 @@ import { ImageSnippet } from 'src/app/shared/image-snippet.model';
   encapsulation: ViewEncapsulation.None
 })
 export class HomePage {
-  constructor(private imageService: ImageService, private loadingCtrl: LoadingController) {}
+  constructor(private imageService: ImageService, private loadingCtrl: LoadingController, private toastCtrl: ToastController) {}
   @ViewChild('file') file: any;
-  uploadedFile = new ImageSnippet();
+  originalImage = new ImageSnippet();
   processedImage = new ImageSnippet();
-  fileAdded = false;
 
   addFiles() {
     this.file.nativeElement.click();
@@ -27,34 +26,39 @@ export class HomePage {
 
     loading.present();
 
-    reader.addEventListener('load', (event: any) => {
-      this.uploadImage(event, file);
-    });
+    reader.addEventListener('load', (event: any) => this.uploadImage(event.target.result, file));
 
     reader.readAsDataURL(file);
   }
 
-  uploadImage(event: any, file: File) {
-    this.uploadedFile.updateFile(event.target.result, file);
+  uploadImage(uploadedImageSrc: string, uploadedFile: File) {
+    const uploadedImage = new ImageSnippet();
+    uploadedImage.updateFile(uploadedImageSrc, uploadedFile);
 
-    this.imageService.uploadImage(this.uploadedFile.file).subscribe(
-      (response) => {
-        this.createImageFromBlob(response);
-        this.loadingCtrl.dismiss();
-        this.fileAdded = true;
-      },
-      (err) => {
-        console.log('An error has occurred: ', err);
-        // Do we need to set the processed image status to something else?
-        this.loadingCtrl.dismiss();
-      }
+    this.imageService.uploadImage(uploadedFile).subscribe(
+      (response: any) => this.createImageFromBlob(response, uploadedImage),
+      () => this.handleError()
     );
   }
 
-  createImageFromBlob(image: Blob) {
+  async handleError() {
+    const toast = await this.toastCtrl.create({
+      message: 'Something went wrong trying to upload your image. Please try again',
+      duration: 5000,
+      position: 'top',
+      color: 'warning'
+    });
+
+    toast.present();
+    this.loadingCtrl.dismiss();
+  }
+
+  createImageFromBlob(image: Blob, uploadedImage: ImageSnippet) {
     const reader = new FileReader();
     reader.addEventListener('load', (event: any) => {
       this.processedImage.updateFile(event.target.result, <File>image);
+      this.originalImage.updateFile(uploadedImage.getSrc(), uploadedImage.getFile());
+      this.loadingCtrl.dismiss();
     });
 
     if (image) {
