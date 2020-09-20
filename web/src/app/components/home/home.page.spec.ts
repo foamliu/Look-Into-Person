@@ -2,6 +2,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { throwError } from 'rxjs';
+import { ImageSnippet } from 'src/app/shared/image-snippet.model';
 import { ToastControllerMock } from 'src/jest-mocks/toast-controller';
 import { ImageServiceMock } from '../../../jest-mocks/image.service';
 import { ImageService } from '../../services/image/image.service';
@@ -16,7 +17,6 @@ describe('HomePage', () => {
   let toastCtrl: ToastController;
 
   const blob = new Blob([''], { type: 'image/png' });
-  blob['lastModifiedDate'] = '';
   blob['name'] = 'mockFileName';
 
   const file = <File>blob;
@@ -53,26 +53,28 @@ describe('HomePage', () => {
     toastCtrl = TestBed.inject(ToastController);
   }));
 
-  test('Should sucessfully upload an image', () => {
+  test('Should sucessfully upload an image and call to read and upload the response', () => {
+    jest.spyOn(component, 'readAndLoadUploadResponse').mockImplementation();
     component.uploadImage(event.target.result, file);
-
-    expect(component.originalImage.getSrc()).toEqual('mockFileSrc');
-    expect(component.originalImage.getFile()).toEqual(file);
-
-    expect(imageService.uploadImage).toHaveBeenCalledWith(file);
-    expect(component.processedImage.getSrc()).toEqual('mockFileSrc');
-    expect(component.processedImage.getFile()).toEqual(file);
-    expect(loadingCtrl.dismiss).toHaveBeenCalled();
+    expect(component.readAndLoadUploadResponse).toHaveBeenCalled();
   });
 
-  test('Should dismiss loading when upload fails', () => {
+  test('Should call the handleError() method when upload fails', () => {
     jest.spyOn(imageService, 'uploadImage').mockReturnValue(throwError('error'));
+    jest.spyOn(component, 'handleError').mockImplementation();
 
     component.uploadImage(event.target.result, file);
 
-    expect(imageService.uploadImage).toHaveBeenCalledWith(file);
-    expect(component.processedImage.getSrc()).toBeUndefined();
-    expect(component.processedImage.getFile()).toBeUndefined();
-    expect(loadingCtrl.dismiss).toHaveBeenCalled();
+    expect(component.handleError).toHaveBeenCalled();
+  });
+
+  test('Should update the Original and Processed images', () => {
+    const originalImage = new ImageSnippet('originalImage', <File>blob);
+    const processedImage = new ImageSnippet('processedImage', <File>blob);
+
+    component.updateOriginalAndProcessedImages(originalImage, processedImage);
+
+    expect(component.originalImage).toEqual(originalImage);
+    expect(component.processedImage).toEqual(processedImage);
   });
 });

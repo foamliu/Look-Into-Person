@@ -36,7 +36,7 @@ export class HomePage {
     uploadedImage.updateFile(uploadedImageSrc, uploadedFile);
 
     this.imageService.uploadImage(uploadedFile).subscribe(
-      (response: any) => this.createImageFromBlob(response, uploadedImage),
+      (response: any) => this.readAndLoadUploadResponse(response, uploadedImage),
       () => this.handleError()
     );
   }
@@ -53,17 +53,22 @@ export class HomePage {
     this.loadingCtrl.dismiss();
   }
 
-  createImageFromBlob(image: Blob, uploadedImage: ImageSnippet) {
+  readAndLoadUploadResponse(image: Blob, originalImage: ImageSnippet) {
     const reader = new FileReader();
     reader.addEventListener('load', (event: any) => {
-      this.processedImage.updateFile(event.target.result, <File>image);
-      this.originalImage.updateFile(uploadedImage.getSrc(), uploadedImage.getFile());
+      const processedImage = new ImageSnippet(event.target.result, <File>image);
+      this.updateOriginalAndProcessedImages(originalImage, processedImage);
       this.loadingCtrl.dismiss();
     });
 
     if (image) {
       reader.readAsDataURL(image);
     }
+  }
+
+  updateOriginalAndProcessedImages(originalImage: ImageSnippet, processedImage: ImageSnippet) {
+    this.processedImage.updateFile(processedImage.getSrc(), processedImage.getFile());
+    this.originalImage.updateFile(originalImage.getSrc(), originalImage.getFile());
   }
 
   clickImage(event: any) {

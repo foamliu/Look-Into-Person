@@ -23,9 +23,7 @@ describe('ImageService', () => {
   afterEach(() => httpTestingController.verify());
 
   test('Should accept an image to upload and return a response', fakeAsync(() => {
-    const body = {
-      image: 'mockImage'
-    };
+    const body = new Blob();
 
     jest.spyOn(service, 'buildUrl').mockImplementation((url) => url);
 

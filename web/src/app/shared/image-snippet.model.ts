@@ -2,6 +2,11 @@ export class ImageSnippet {
   private src: string;
   private file: File;
 
+  constructor(src?: string, file?: File) {
+    this.src = src;
+    this.file = file;
+  }
+
   updateFile(src: string, file: File) {
     this.src = src;
     this.file = file;
