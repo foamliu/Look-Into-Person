@@ -22,8 +22,7 @@
       <ion-col>
         <ion-item class="image">
           <ion-label slot="start" position="stacked">Processed Image</ion-label>
-          <img src="/assets/icon/favicon.png" *ngIf="isUploadStatusNotStarted()" />
-          <img [src]="processedImage.src" *ngIf="isUploadComplete()" />
+          <img [src]="processedImage.src" />
         </ion-item>
       </ion-col>
     </ion-row>

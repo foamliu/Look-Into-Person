@@ -1,7 +1,7 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 import { ImageService } from 'src/app/services/image/image.service';
-import { ImageSnippet, UploadStatus } from 'src/app/shared/image-snippet.model';
+import { ImageSnippet } from 'src/app/shared/image-snippet.model';
 
 @Component({
   selector: 'home',
@@ -26,8 +26,6 @@ export class HomePage {
     const loading = await this.loadingCtrl.create();
 
     loading.present();
-
-    this.processedImage.status = UploadStatus.InProgress;
 
     reader.addEventListener('load', (event: any) => {
       this.uploadImage(event, file);
@@ -57,24 +55,11 @@ export class HomePage {
     const reader = new FileReader();
     reader.addEventListener('load', (event: any) => {
       this.processedImage.updateFile(event.target.result, <File>image);
-      this.processedImage.status = UploadStatus.Completed;
     });
 
     if (image) {
       reader.readAsDataURL(image);
     }
-  }
-
-  isUploadStatusNotStarted() {
-    return this.processedImage.status === UploadStatus.NotStarted;
-  }
-
-  isUploadPending() {
-    return this.processedImage.status === UploadStatus.InProgress;
-  }
-
-  isUploadComplete() {
-    return this.processedImage.status === UploadStatus.Completed;
   }
 
   clickImage(event: any) {

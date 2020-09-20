@@ -5,7 +5,6 @@ import { throwError } from 'rxjs';
 import { ImageServiceMock } from '../../../jest-mocks/image.service';
 import { ImageService } from '../../services/image/image.service';
 import { LoadingControllerMock } from './../../../jest-mocks/loading-controller';
-import { UploadStatus } from './../../shared/image-snippet.model';
 import { HomePage } from './home.page';
 
 describe('HomePage', () => {
@@ -48,7 +47,6 @@ describe('HomePage', () => {
   }));
 
   test('Should sucessfully upload an image', () => {
-    component.processedImage.status = UploadStatus.InProgress;
     component.uploadImage(event, file);
 
     expect(component.uploadedFile.src).toEqual('mockFileSrc');
@@ -58,7 +56,6 @@ describe('HomePage', () => {
     expect(component.fileAdded).toBe(true);
     expect(component.processedImage.src).toEqual('mockFileSrc');
     expect(component.processedImage.file).toEqual(file);
-    expect(component.processedImage.status).toEqual(UploadStatus.Completed);
     expect(loadingCtrl.dismiss).toHaveBeenCalled();
   });
 
@@ -71,7 +68,6 @@ describe('HomePage', () => {
     expect(component.fileAdded).toBe(false);
     expect(component.processedImage.src).toEqual('/assets/icon/favicon.png');
     expect(component.processedImage.file).toBeUndefined();
-    expect(component.processedImage.status).toEqual(UploadStatus.NotStarted);
     expect(loadingCtrl.dismiss).toHaveBeenCalled();
   });
 });
