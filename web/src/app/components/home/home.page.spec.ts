@@ -48,12 +48,8 @@ describe('HomePage', () => {
   }));
 
   test('Should sucessfully upload an image', () => {
-    jest.spyOn(component, 'tryToSetSkeletonTextHeight').mockImplementation();
-
     component.processedImage.status = UploadStatus.InProgress;
     component.uploadImage(event, file);
-
-    expect(component.tryToSetSkeletonTextHeight).toHaveBeenCalled();
 
     expect(component.uploadedFile.src).toEqual('mockFileSrc');
     expect(component.uploadedFile.file).toEqual(file);
@@ -67,12 +63,10 @@ describe('HomePage', () => {
   });
 
   test('Should dismiss loading when upload fails', () => {
-    jest.spyOn(component, 'tryToSetSkeletonTextHeight').mockImplementation();
     jest.spyOn(imageService, 'uploadImage').mockReturnValue(throwError('error'));
 
     component.uploadImage(event, file);
 
-    expect(component.tryToSetSkeletonTextHeight).toHaveBeenCalled();
     expect(imageService.uploadImage).toHaveBeenCalledWith(file);
     expect(component.fileAdded).toBe(false);
     expect(component.processedImage.src).toEqual('/assets/icon/favicon.png');

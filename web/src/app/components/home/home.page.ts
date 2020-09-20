@@ -38,7 +38,6 @@ export class HomePage {
 
   uploadImage(event: any, file: File) {
     this.uploadedFile.updateFile(event.target.result, file);
-    this.tryToSetSkeletonTextHeight();
 
     this.imageService.uploadImage(this.uploadedFile.file).subscribe(
       (response) => {
@@ -64,21 +63,6 @@ export class HomePage {
     if (image) {
       reader.readAsDataURL(image);
     }
-  }
-
-  tryToSetSkeletonTextHeight() {
-    if (this.isUploadPending()) {
-      console.log('Upload pending');
-      setTimeout(() => this.setSkeletonTextHeight(), 10);
-    }
-  }
-
-  setSkeletonTextHeight() {
-    const skeletonText = document.getElementById('skeleton-text');
-    const uploadedImage = document.getElementById('uploaded-image');
-
-    skeletonText.style.height = `${uploadedImage.scrollWidth}rem`;
-    skeletonText.style.width = `${uploadedImage.scrollHeight}rem`;
   }
 
   isUploadStatusNotStarted() {

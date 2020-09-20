@@ -16,14 +16,13 @@
       <ion-col>
         <ion-item class="image">
           <ion-label slot="start" position="stacked">Original Image</ion-label>
-          <img [src]="uploadedFile.src" id="uploaded-image" (click)="clickImage($event)" />
+          <img [src]="uploadedFile.src" (click)="clickImage($event)" />
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item class="image">
           <ion-label slot="start" position="stacked">Processed Image</ion-label>
           <img src="/assets/icon/favicon.png" *ngIf="isUploadStatusNotStarted()" />
-          <ion-skeleton-text animated *ngIf="isUploadPending()" id="skeleton-text"></ion-skeleton-text>
           <img [src]="processedImage.src" *ngIf="isUploadComplete()" />
         </ion-item>
       </ion-col>
