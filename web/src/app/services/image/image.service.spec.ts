@@ -23,14 +23,16 @@ describe('ImageService', () => {
   afterEach(() => httpTestingController.verify());
 
   test('Should accept an image to upload and return a response', fakeAsync(() => {
-    const body = new Blob();
+    const body = { segmentedImage: 'mockSrc' };
+    const src = 'mockSrc';
 
     jest.spyOn(service, 'buildUrl').mockImplementation((url) => url);
 
     const expectedForm = new FormData();
-    expectedForm.append('image', file);
+    expectedForm.append('image', src);
+    expectedForm.append('fileName', file.name);
 
-    service.uploadImage(file).subscribe((response) => expect(response).toEqual(body));
+    service.uploadImage(src, file.name).subscribe((response) => expect(response).toEqual(body));
     tick();
 
     const req = httpTestingController.expectOne('/upload');

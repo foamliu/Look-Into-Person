@@ -2,7 +2,6 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { throwError } from 'rxjs';
-import { ImageSnippet } from 'src/app/shared/image-snippet.model';
 import { ToastControllerMock } from 'src/jest-mocks/toast-controller';
 import { ImageServiceMock } from '../../../jest-mocks/image.service';
 import { ImageService } from '../../services/image/image.service';
@@ -54,9 +53,11 @@ describe('HomePage', () => {
   }));
 
   test('Should sucessfully upload an image and call to read and upload the response', () => {
-    jest.spyOn(component, 'readAndLoadUploadResponse').mockImplementation();
     component.uploadImage(event.target.result, file);
-    expect(component.readAndLoadUploadResponse).toHaveBeenCalled();
+    expect(imageService.uploadImage).toHaveBeenCalledWith('mockFileSrc', 'mockFileName');
+    expect(component.originalImage.getSrc()).toEqual('mockFileSrc');
+    expect(component.processedImage.getSrc()).toEqual('b64String');
+    expect(loadingCtrl.dismiss).toHaveBeenCalled();
   });
 
   test('Should call the handleError() method when upload fails', () => {
@@ -66,15 +67,5 @@ describe('HomePage', () => {
     component.uploadImage(event.target.result, file);
 
     expect(component.handleError).toHaveBeenCalled();
-  });
-
-  test('Should update the Original and Processed images', () => {
-    const originalImage = new ImageSnippet('originalImage', <File>blob);
-    const processedImage = new ImageSnippet('processedImage', <File>blob);
-
-    component.updateOriginalAndProcessedImages(originalImage, processedImage);
-
-    expect(component.originalImage).toEqual(originalImage);
-    expect(component.processedImage).toEqual(processedImage);
   });
 });

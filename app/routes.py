@@ -21,12 +21,19 @@ def index():
 # delete img after processing
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
-    if request.method == 'POST':
-        f = request.files['image']
-        fileinfo = save_upload(f)
-        img_data = img_process(fileinfo[0])
-        pro_img = save_processed(img_data, fileinfo[1])
-        return send_file(pro_img)
+
+    b64_string = request.form['image']
+    filename = request.form['fileName']
+
+    image = fromBase64(b64_string)
+    image.filename = filename
+
+    fileinfo = save_upload(image)
+    img_data = img_process(fileinfo[0])
+    pro_img = save_processed(img_data, fileinfo[1])
+
+    processed_base64 = toBase64(Image.open(pro_img))
+    return json_response({'segmentedImage': getHTML(processed_base64)})
 
 @app.route('/select_segment', methods=['GET', 'POST'])
 def select_segment():

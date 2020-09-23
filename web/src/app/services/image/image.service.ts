@@ -14,13 +14,14 @@ export class ImageService {
     return environment.API_URL + url;
   }
 
-  public uploadImage(image: File): Observable<any> {
+  public uploadImage(src: string, fileName: string): Observable<any> {
     const formData = new FormData();
 
-    formData.append('image', image);
+    formData.append('image', src);
+    formData.append('fileName', fileName);
     const url = this.buildUrl('/upload');
 
-    return this.http.post(url, formData, { responseType: 'blob' }).pipe(
+    return this.http.post(url, formData).pipe(
       map((response) => {
         return response;
       })
