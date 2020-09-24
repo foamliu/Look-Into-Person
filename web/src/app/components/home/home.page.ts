@@ -1,7 +1,6 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { ImageService } from 'src/app/services/image/image.service';
-import { ImageSnippet } from 'src/app/shared/image-snippet.model';
 
 @Component({
   selector: 'home',
@@ -12,8 +11,8 @@ import { ImageSnippet } from 'src/app/shared/image-snippet.model';
 export class HomePage {
   constructor(private imageService: ImageService, private loadingCtrl: LoadingController, private toastCtrl: ToastController) {}
   @ViewChild('file') file: any;
-  originalImage = new ImageSnippet();
-  processedImage = new ImageSnippet();
+  originalImage = '';
+  processedImage = '';
 
   addFiles() {
     this.file.nativeElement.click();
@@ -34,10 +33,13 @@ export class HomePage {
   uploadImage(src: string, file: File) {
     this.imageService.uploadImage(src, file.name).subscribe(
       (response: any) => {
-        this.originalImage.setSrc(src);
-        this.processedImage.setSrc(response.segmentedImage);
-
-        this.loadingCtrl.dismiss();
+        if (response && response.segmentedImage) {
+          this.originalImage = src;
+          this.processedImage = response.segmentedImage;
+          this.loadingCtrl.dismiss();
+        } else {
+          this.handleError();
+        }
       },
       () => this.handleError()
     );

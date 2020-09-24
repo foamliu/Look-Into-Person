@@ -1,7 +1,7 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoadingController, ToastController } from '@ionic/angular';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { ToastControllerMock } from 'src/jest-mocks/toast-controller';
 import { ImageServiceMock } from '../../../jest-mocks/image.service';
 import { ImageService } from '../../services/image/image.service';
@@ -55,9 +55,19 @@ describe('HomePage', () => {
   test('Should sucessfully upload an image and call to read and upload the response', () => {
     component.uploadImage(event.target.result, file);
     expect(imageService.uploadImage).toHaveBeenCalledWith('mockFileSrc', 'mockFileName');
-    expect(component.originalImage.getSrc()).toEqual('mockFileSrc');
-    expect(component.processedImage.getSrc()).toEqual('b64String');
+    expect(component.originalImage).toEqual('mockFileSrc');
+    expect(component.processedImage).toEqual('b64String');
     expect(loadingCtrl.dismiss).toHaveBeenCalled();
+  });
+
+  test('Should handle an error on upload when we do not get the expected response', () => {
+    jest.spyOn(imageService, 'uploadImage').mockReturnValue(of({ finalImage: 'mockSrc' }));
+    jest.spyOn(component, 'handleError').mockImplementation();
+
+    component.uploadImage(event.target.result, file);
+    expect(component.originalImage).toBe('');
+    expect(component.processedImage).toBe('');
+    expect(component.handleError).toHaveBeenCalled();
   });
 
   test('Should call the handleError() method when upload fails', () => {
