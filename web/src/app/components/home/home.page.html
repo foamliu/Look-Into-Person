@@ -16,19 +16,45 @@
       <ion-col>
         <ion-item class="image">
           <ion-label slot="start" position="stacked">Original Image</ion-label>
-          <img [src]="originalImage" (click)="clickImage($event)" />
+          <img [src]="originalImage" />
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item class="image">
           <ion-label slot="start" position="stacked">Processed Image</ion-label>
-          <img [src]="processedImage" />
+          <img id="processedImage" [src]="processedImage" (click)="onProcessedImageClick($event)" />
         </ion-item>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-button id="upload" (click)="addFiles()">Select a file</ion-button>
     </ion-row>
+    <div *ngIf="processedImage">
+      <ion-item>
+        <ion-label>Select an outline color</ion-label>
+        <input
+          [(colorPicker)]="selectedColor"
+          [style.background]="selectedColor"
+          cpPosition="top-left"
+          cpOutputFormat="rgba"
+          cpAlphaChannel="disabled"
+        />
+      </ion-item>
+      <ion-item>
+        <ion-label>Select an outline thickness</ion-label>
+        <ion-select interface="popover" name="outlineThickness" [value]="outlineThickness">
+          <ion-select-option value="0">Small</ion-select-option>
+          <ion-select-option value="1">Medium</ion-select-option>
+          <ion-select-option value="2">Large</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-row class="segment-selection">
+        <ion-col size="6">Click the processed image to select the section to outline</ion-col>
+        <ion-col>You selected: </ion-col>
+        <ion-col class="segment-color" [ngStyle]="{ color: segmentColor }">this color!</ion-col>
+      </ion-row>
+      <ion-button [disabled]="!readyToOutline()" (click)="getOutlinedImages()">Get outlined images</ion-button>
+    </div>
   </ion-grid>
 </ion-content>
 

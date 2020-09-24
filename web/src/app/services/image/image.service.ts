@@ -27,4 +27,13 @@ export class ImageService {
       })
     );
   }
+
+  getOutlinedImages(segmentColor: string, outlineColor: string, outlineThickness: string) {
+    const formData = new FormData();
+    formData.append('segmentColor', segmentColor);
+    formData.append('outlineColor', outlineColor);
+    formData.append('outlineThickness', outlineThickness);
+
+    return this.http.post(this.buildUrl('/segment'), formData).pipe(map((response) => response));
+  }
 }

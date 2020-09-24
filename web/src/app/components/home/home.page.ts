@@ -13,9 +13,17 @@ export class HomePage {
   @ViewChild('file') file: any;
   originalImage = '';
   processedImage = '';
+  selectedColor = 'rgb(255,255,255)';
+  outlineThickness: '0' | '1' | '2' = '0';
+  segmentColor: string;
 
   addFiles() {
     this.file.nativeElement.click();
+  }
+
+  async showLoading() {
+    const loading = await this.loadingCtrl.create();
+    return await loading.present();
   }
 
   async onFilesAdded() {
@@ -57,14 +65,49 @@ export class HomePage {
     this.loadingCtrl.dismiss();
   }
 
-  clickImage(event: any) {
+  onProcessedImageClick(event: any): void {
+    const pixelData = this.getPixelData(event);
+    this.segmentColor = `rgba(${pixelData[0]},${pixelData[1]},${pixelData[2]},${pixelData[3]})`;
+  }
+
+  /*
+    When the processed image is clicked, create a canvas object.
+    Then get the ImageData from the fired event.
+  */
+  getPixelData(event: any) {
     const id = event.target.id;
     const img: any = document.getElementById(id);
     const canvas: any = document.createElement('canvas');
     canvas.width = img.width;
     canvas.height = img.height;
     canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
-    const pixelData = canvas.getContext('2d').getImageData(event.offsetX, event.offsetY, 1, 1).data;
-    console.log(pixelData);
+    return canvas.getContext('2d').getImageData(event.offsetX, event.offsetY, 1, 1).data;
+  }
+
+  getOutlineColor(): string {
+    // color returns from color picker like "rgb(xx,xx,xx)"
+    // Pull the RGB numbers from the string
+    return this.selectedColor.substring(4, this.selectedColor.length - 1);
+  }
+
+  readyToOutline(): boolean {
+    return !!this.selectedColor && !!this.outlineThickness && !!this.segmentColor;
+  }
+
+  getOutlinedImages() {
+    this.showLoading();
+
+    this.imageService.getOutlinedImages(this.segmentColor, this.outlineThickness, this.getOutlineColor()).subscribe(
+      (response: any) => {
+        if (response && response.originalOutline && response.segmentedOutline) {
+          this.originalImage = response.originalOutline;
+          this.processedImage = response.segmentedOutline;
+          this.loadingCtrl.dismiss();
+        } else {
+          this.handleError();
+        }
+      },
+      () => this.handleError()
+    );
   }
 }

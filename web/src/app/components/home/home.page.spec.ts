@@ -50,6 +50,8 @@ describe('HomePage', () => {
     imageService = TestBed.inject(ImageService);
     loadingCtrl = TestBed.inject(LoadingController);
     toastCtrl = TestBed.inject(ToastController);
+
+    jest.spyOn(component, 'showLoading').mockImplementation();
   }));
 
   test('Should sucessfully upload an image and call to read and upload the response', () => {
@@ -77,5 +79,56 @@ describe('HomePage', () => {
     component.uploadImage(event.target.result, file);
 
     expect(component.handleError).toHaveBeenCalled();
+  });
+
+  test('Should convert pixel data to an rgba color string', () => {
+    jest.spyOn(component, 'getPixelData').mockReturnValue([25, 72, 255, 1]);
+
+    component.onProcessedImageClick('mockEvent');
+
+    expect(component.segmentColor).toEqual('rgba(25,72,255,1)');
+  });
+
+  describe('getOutlinedImages()', () => {
+    beforeEach(() => {
+      component.segmentColor = 'rgba(255,255,11,0.4)';
+      component.outlineThickness = '1';
+      component.selectedColor = 'rgb(66,66,66)';
+      component.originalImage = 'original1';
+      component.processedImage = 'processed1';
+
+      jest.spyOn(component, 'handleError').mockImplementation();
+    });
+
+    test('Should request outlined images and then display them', () => {
+      component.getOutlinedImages();
+
+      expect(imageService.getOutlinedImages).toHaveBeenCalledWith('rgba(255,255,11,0.4)', '1', '66,66,66');
+      expect(component.originalImage).toEqual('outlined1');
+      expect(component.processedImage).toEqual('outlined2');
+      expect(component.handleError).not.toHaveBeenCalled();
+    });
+
+    test('Should request outlined images and handle an error and not change the images if the expected data is not returned', () => {
+      jest.spyOn(imageService, 'getOutlinedImages').mockReturnValue(of({ originalOutline: 'outlined1', outlinedSegment: 'outlined2' }));
+
+      component.getOutlinedImages();
+
+      expect(imageService.getOutlinedImages).toHaveBeenCalledWith('rgba(255,255,11,0.4)', '1', '66,66,66');
+      expect(component.originalImage).toEqual('original1');
+      expect(component.processedImage).toEqual('processed1');
+      expect(component.handleError).toHaveBeenCalled();
+    });
+
+    test('Should request outlined images and handle an error and not change the images if there is an Http error', () => {
+      jest.spyOn(imageService, 'getOutlinedImages').mockReturnValue(throwError('error'));
+
+      component.getOutlinedImages();
+
+      expect(imageService.getOutlinedImages).toHaveBeenCalledWith('rgba(255,255,11,0.4)', '1', '66,66,66');
+      expect(component.originalImage).toEqual('original1');
+      expect(component.processedImage).toEqual('processed1');
+      expect(component.handleError).toHaveBeenCalled();
+    });
   });
 });

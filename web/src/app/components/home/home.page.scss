@@ -28,4 +28,10 @@ home {
     background-size: contain;
     background-repeat: no-repeat;
   }
+
+  .segment-selection {
+    ion-col {
+      border: none !important;
+    }
+  }
 }
