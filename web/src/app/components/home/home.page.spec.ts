@@ -1,7 +1,8 @@
+import { HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { LoadingController, ToastController } from '@ionic/angular';
-import { of, throwError } from 'rxjs';
+import { throwError } from 'rxjs';
 import { ToastControllerMock } from 'src/jest-mocks/toast-controller';
 import { ImageServiceMock } from '../../../jest-mocks/image.service';
 import { ImageService } from '../../services/image/image.service';
@@ -52,21 +53,65 @@ describe('HomePage', () => {
     toastCtrl = TestBed.inject(ToastController);
 
     jest.spyOn(component, 'showLoading').mockImplementation();
+    jest.spyOn(component, 'dismissLoading').mockImplementation();
+    jest.spyOn(component, 'handleError').mockImplementation();
   }));
 
-  test('Should sucessfully upload an image and call to read and upload the response', () => {
+  test('Should upload an image and handle the response', () => {
+    jest.spyOn(component, 'handleResponseForUploadImage');
+
     component.uploadImage(event.target.result, file);
-    expect(imageService.uploadImage).toHaveBeenCalledWith('mockFileSrc', 'mockFileName');
+    expect(component.handleResponseForUploadImage).toHaveBeenCalledWith(
+      new HttpResponse({
+        body: { segmentedImage: 'b64String' }
+      }),
+      'mockFileSrc'
+    );
+  });
+
+  test('Should handle an upload event when uploading an image', () => {
+    jest.spyOn(component, 'handleUploadEvent').mockImplementation();
+
+    const httpEvent: HttpEvent<HttpEventType.UploadProgress> = {
+      type: HttpEventType.UploadProgress,
+      loaded: 25,
+      total: 100
+    };
+
+    component.handleResponseForUploadImage(httpEvent, 'mockSrc');
+    expect(component.handleUploadEvent).toHaveBeenCalledWith(25, 100);
+  });
+
+  test('Should handle a download event when uploading an image', () => {
+    jest.spyOn(component, 'handleDownloadEvent').mockImplementation();
+
+    const httpEvent: HttpEvent<HttpEventType.DownloadProgress> = {
+      type: HttpEventType.DownloadProgress,
+      loaded: 87,
+      total: 100
+    };
+
+    component.handleResponseForUploadImage(httpEvent, 'mockSrc');
+    expect(component.handleDownloadEvent).toHaveBeenCalledWith(87, 100);
+  });
+
+  test('Should handle an HttpResponse when uploading an image', () => {
+    const response = new HttpResponse({
+      body: { segmentedImage: 'b64String' }
+    });
+
+    component.handleResponseForUploadImage(response, 'mockFileSrc');
     expect(component.originalImage).toEqual('mockFileSrc');
     expect(component.processedImage).toEqual('b64String');
-    expect(loadingCtrl.dismiss).toHaveBeenCalled();
+    expect(component.dismissLoading).toHaveBeenCalled();
   });
 
   test('Should handle an error on upload when we do not get the expected response', () => {
-    jest.spyOn(imageService, 'uploadImage').mockReturnValue(of({ finalImage: 'mockSrc' }));
-    jest.spyOn(component, 'handleError').mockImplementation();
+    const response = new HttpResponse({
+      body: { finalImage: 'b64String' }
+    });
 
-    component.uploadImage(event.target.result, file);
+    component.handleResponseForUploadImage(response, 'mockFileSrc');
     expect(component.originalImage).toBe('');
     expect(component.processedImage).toBe('');
     expect(component.handleError).toHaveBeenCalled();
@@ -74,7 +119,6 @@ describe('HomePage', () => {
 
   test('Should call the handleError() method when upload fails', () => {
     jest.spyOn(imageService, 'uploadImage').mockReturnValue(throwError('error'));
-    jest.spyOn(component, 'handleError').mockImplementation();
 
     component.uploadImage(event.target.result, file);
 
@@ -89,46 +133,87 @@ describe('HomePage', () => {
     expect(component.segmentColor).toEqual('rgba(25,72,255,1)');
   });
 
-  describe('getOutlinedImages()', () => {
+  describe('requesting outlined images', () => {
     beforeEach(() => {
       component.segmentColor = 'rgba(255,255,11,0.4)';
       component.outlineThickness = '1';
       component.selectedColor = 'rgb(66,66,66)';
       component.originalImage = 'original1';
       component.processedImage = 'processed1';
-
-      jest.spyOn(component, 'handleError').mockImplementation();
     });
 
-    test('Should request outlined images and then display them', () => {
-      component.getOutlinedImages();
+    test('Should request outlined images and handle the response', fakeAsync(() => {
+      jest.spyOn(component, 'handleResponseForOutlinedImages').mockImplementation();
 
-      expect(imageService.getOutlinedImages).toHaveBeenCalledWith('rgba(255,255,11,0.4)', '1', '66,66,66');
+      component.getOutlinedImages();
+      tick();
+
+      expect(component.handleResponseForOutlinedImages).toHaveBeenCalledWith(
+        new HttpResponse({
+          body: { originalOutline: 'outlined1', segmentedOutline: 'outlined2' }
+        })
+      );
+    }));
+
+    test('Should handle an upload event when uploading an image', () => {
+      jest.spyOn(component, 'handleUploadEvent').mockImplementation();
+
+      const httpEvent: HttpEvent<HttpEventType.UploadProgress> = {
+        type: HttpEventType.UploadProgress,
+        loaded: 33,
+        total: 100
+      };
+
+      component.handleResponseForOutlinedImages(httpEvent);
+      expect(component.handleUploadEvent).toHaveBeenCalledWith(33, 100);
+    });
+
+    test('Should handle a download event when uploading an image', () => {
+      jest.spyOn(component, 'handleDownloadEvent').mockImplementation();
+
+      const httpEvent: HttpEvent<HttpEventType.DownloadProgress> = {
+        type: HttpEventType.DownloadProgress,
+        loaded: 100,
+        total: 100
+      };
+
+      component.handleResponseForOutlinedImages(httpEvent);
+      expect(component.handleDownloadEvent).toHaveBeenCalledWith(100, 100);
+    });
+
+    test('Should handle an HttpResponse with the expected body when requesting outlined images', () => {
+      const response = new HttpResponse({
+        body: { originalOutline: 'outlined1', segmentedOutline: 'outlined2' }
+      });
+
+      component.handleResponseForOutlinedImages(response);
+
       expect(component.originalImage).toEqual('outlined1');
       expect(component.processedImage).toEqual('outlined2');
-      expect(component.handleError).not.toHaveBeenCalled();
+      expect(component.dismissLoading).toHaveBeenCalled();
     });
 
     test('Should request outlined images and handle an error and not change the images if the expected data is not returned', () => {
-      jest.spyOn(imageService, 'getOutlinedImages').mockReturnValue(of({ originalOutline: 'outlined1', outlinedSegment: 'outlined2' }));
+      const response = new HttpResponse({
+        body: { original: 'outlined1', sgemented: 'outlined2' }
+      });
 
-      component.getOutlinedImages();
+      component.handleResponseForOutlinedImages(response);
 
-      expect(imageService.getOutlinedImages).toHaveBeenCalledWith('rgba(255,255,11,0.4)', '1', '66,66,66');
       expect(component.originalImage).toEqual('original1');
       expect(component.processedImage).toEqual('processed1');
       expect(component.handleError).toHaveBeenCalled();
     });
-
-    test('Should request outlined images and handle an error and not change the images if there is an Http error', () => {
+    test('Should request outlined images and handle an error and not change the images if there is an Http error', fakeAsync(() => {
       jest.spyOn(imageService, 'getOutlinedImages').mockReturnValue(throwError('error'));
 
       component.getOutlinedImages();
+      tick();
 
       expect(imageService.getOutlinedImages).toHaveBeenCalledWith('rgba(255,255,11,0.4)', '1', '66,66,66');
       expect(component.originalImage).toEqual('original1');
       expect(component.processedImage).toEqual('processed1');
       expect(component.handleError).toHaveBeenCalled();
-    });
+    }));
   });
 });

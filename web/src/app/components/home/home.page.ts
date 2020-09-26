@@ -1,3 +1,4 @@
+import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { ImageService } from 'src/app/services/image/image.service';
@@ -21,17 +22,32 @@ export class HomePage {
     this.file.nativeElement.click();
   }
 
-  async showLoading() {
-    const loading = await this.loadingCtrl.create();
-    return await loading.present();
+  async showLoading(): Promise<void> {
+    const loading = await this.loadingCtrl.create({
+      message: `Uploading... ${this.imageService.getUploadProgress()}%`
+    });
+
+    await loading.present();
+    this.imageService.setLoadingElement(document.querySelector('div.loading-wrapper div.loading-content'));
+  }
+
+  dismissLoading(): void {
+    this.loadingCtrl.dismiss();
+    this.imageService.resetProgress();
+  }
+
+  handleUploadEvent(loaded: number, total: number) {
+    this.imageService.setUploadProgress(Math.round((loaded / total) * 100));
+  }
+
+  handleDownloadEvent(loaded: number, total: number) {
+    this.imageService.setDownloadProgress(Math.round((loaded / total) * 100));
   }
 
   async onFilesAdded() {
     const file: File = this.file.nativeElement.files[0];
     const reader = new FileReader();
-    const loading = await this.loadingCtrl.create();
-
-    loading.present();
+    await this.showLoading();
 
     reader.addEventListener('load', (event: any) => this.uploadImage(event.target.result, file));
 
@@ -40,20 +56,38 @@ export class HomePage {
 
   uploadImage(src: string, file: File) {
     this.imageService.uploadImage(src, file.name).subscribe(
-      (response: any) => {
-        if (response && response.segmentedImage) {
-          this.originalImage = src;
-          this.processedImage = response.segmentedImage;
-          this.loadingCtrl.dismiss();
-        } else {
-          this.handleError();
-        }
+      (event: HttpEvent<any>) => {
+        this.handleResponseForUploadImage(event, src);
       },
       () => this.handleError()
     );
   }
 
-  async handleError() {
+  handleResponseForUploadImage(event: HttpEvent<any>, src: string) {
+    switch (event.type) {
+      case HttpEventType.UploadProgress: {
+        this.handleUploadEvent(event.loaded, event.total);
+        break;
+      }
+      case HttpEventType.DownloadProgress: {
+        this.handleDownloadEvent(event.loaded, event.total);
+        break;
+      }
+      case HttpEventType.Response: {
+        if (event.body && event.body.segmentedImage) {
+          this.originalImage = src;
+          this.processedImage = event.body.segmentedImage;
+          this.dismissLoading();
+        } else {
+          this.handleError();
+        }
+
+        break;
+      }
+    }
+  }
+
+  async handleError(): Promise<void> {
     const toast = await this.toastCtrl.create({
       message: 'Something went wrong trying to upload your image. Please try again',
       duration: 5000,
@@ -98,20 +132,37 @@ export class HomePage {
     return `You selected ${this.segmentColor}, which looks like this:`;
   }
 
-  getOutlinedImages() {
-    this.showLoading();
+  async getOutlinedImages() {
+    await this.showLoading();
 
     this.imageService.getOutlinedImages(this.segmentColor, this.outlineThickness, this.getOutlineColor()).subscribe(
-      (response: any) => {
-        if (response && response.originalOutline && response.segmentedOutline) {
-          this.originalImage = response.originalOutline;
-          this.processedImage = response.segmentedOutline;
-          this.loadingCtrl.dismiss();
-        } else {
-          this.handleError();
-        }
+      (event: HttpEvent<any>) => {
+        this.handleResponseForOutlinedImages(event);
       },
       () => this.handleError()
     );
+  }
+
+  handleResponseForOutlinedImages(event: HttpEvent<any>) {
+    switch (event.type) {
+      case HttpEventType.UploadProgress: {
+        this.handleUploadEvent(event.loaded, event.total);
+        break;
+      }
+      case HttpEventType.DownloadProgress: {
+        this.handleDownloadEvent(event.loaded, event.total);
+        break;
+      }
+      case HttpEventType.Response: {
+        if (event.body && event.body.originalOutline && event.body.segmentedOutline) {
+          this.originalImage = event.body.originalOutline;
+          this.processedImage = event.body.segmentedOutline;
+          this.dismissLoading();
+        } else {
+          this.handleError();
+        }
+        break;
+      }
+    }
   }
 }
