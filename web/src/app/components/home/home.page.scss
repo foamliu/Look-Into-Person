@@ -7,6 +7,7 @@ home {
     left: 0;
     right: 0;
     top: 50%;
+    height: calc(100% - 150rem);
     transform: translateY(-50%);
 
     ion-item {
@@ -29,7 +30,9 @@ home {
     background-repeat: no-repeat;
   }
 
-  .segment-selection {
+  ion-row.selected-segment-row {
+    border: none !important;
+
     ion-col {
       border: none !important;
     }

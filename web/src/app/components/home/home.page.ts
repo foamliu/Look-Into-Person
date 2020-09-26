@@ -94,6 +94,10 @@ export class HomePage {
     return !!this.selectedColor && !!this.outlineThickness && !!this.segmentColor;
   }
 
+  getSegmentColorLabel(): string {
+    return `You selected ${this.segmentColor}, which looks like this:`;
+  }
+
   getOutlinedImages() {
     this.showLoading();
 
