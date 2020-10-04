@@ -3,6 +3,8 @@ import os
 import random
 
 import cv2 as cv
+import tensorflow.keras as keras
+import tensorflow as tf
 import keras.backend as K
 import numpy as np
 
@@ -16,20 +18,23 @@ if __name__ == '__main__':
     channel = 3
 
     model = build_model()
-    model.load_weights(get_best_model())
+    model.load_weights('models/model.11-0.8409.hdf5')
 
     print(model.summary())
 
-    test_images_folder = 'data/instance-level_human_parsing/Testing/Images'
-    id_file = 'data/instance-level_human_parsing/Testing/test_id.txt'
+    # test_images_folder = 'data/instance-level_human_parsing/Testing/images'
+    # id_file = 'data/instance-level_human_parsing/Testing/test_id.txt'
+
+    test_images_folder = 'data/instance-level_human_parsing/Training/Pristine_Images'
+    id_file = 'data/instance-level_human_parsing/Training/pristine_names.txt'
     with open(id_file, 'r') as f:
         names = f.read().splitlines()
 
-    samples = random.sample(names, 10)
+    samples = random.sample(names, 117)
 
     for i in range(len(samples)):
         image_name = samples[i]
-        filename = os.path.join(test_images_folder, image_name + '.jpg')
+        filename = os.path.join(test_images_folder, image_name + '.png')
         image = cv.imread(filename)
         image_size = image.shape[:2]
 

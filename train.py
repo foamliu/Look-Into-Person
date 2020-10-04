@@ -1,6 +1,6 @@
 import argparse
 
-import keras
+import tensorflow.keras as keras
 import tensorflow as tf
 from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 from keras.utils import multi_gpu_model
@@ -43,6 +43,22 @@ if __name__ == '__main__':
 
     # Load our model, added support for Multi-GPUs
     num_gpu = len(get_available_gpus())
+    # gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.3)
+    # sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+
+    gpus = tf.config.experimental.list_physical_devices('GPU')
+    if gpus:
+  # Restrict TensorFlow to only allocate 1GB of memory on the first GPU
+      try:
+        # tf.config.experimental.set_virtual_device_configuration(gpus[0], [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=256)])
+        # tf.config.experimental.set_memory_growth(gpus[0], True)
+        logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+        print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+      except RuntimeError as e:
+    # Virtual devices must be set before GPUs have been initialized
+        print(e)
+
+
     if num_gpu >= 2:
         with tf.device("/cpu:0"):
             model = build_model()
@@ -65,16 +81,17 @@ if __name__ == '__main__':
     print(new_model.summary())
 
     # Final callbacks
+    # callbacks = [model_checkpoint, early_stop, reduce_lr]
     callbacks = [tensor_board, model_checkpoint, early_stop, reduce_lr]
 
     # Start Fine-tuning
-    new_model.fit_generator(train_gen(),
+    new_model.fit(train_gen(),
                             steps_per_epoch=num_train_samples // batch_size,
                             validation_data=valid_gen(),
                             validation_steps=num_valid_samples // batch_size,
                             epochs=epochs,
                             verbose=1,
                             callbacks=callbacks,
-                            use_multiprocessing=True,
-                            workers=int(get_available_cpus() * 0.80)
+                            # use_multiprocessing=True,
+                            # workers=int(get_available_cpus() * 0.80)
                             )

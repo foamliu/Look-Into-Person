@@ -20,7 +20,7 @@ if __name__ == '__main__':
     img_rows, img_cols = 320, 320
     channel = 3
 
-    model_weights_path = 'models/model.54-2.2507.hdf5'
+    model_weights_path = 'models/model.11-0.8409.hdf5'
     model = build_model()
     model.load_weights(model_weights_path)
 

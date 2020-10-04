@@ -7,6 +7,11 @@ from keras.utils import Sequence
 from keras.utils import to_categorical
 from config import batch_size, img_rows, img_cols, num_classes, color_map
 
+# train_images_folder = 'data/instance-level_human_parsing/Training/LIP_Images'
+# train_categories_folder = 'data/instance-level_human_parsing/Training/LIP_Category_ids'
+# valid_images_folder = 'data/instance-level_human_parsing/Validation/LIP_Images'
+# valid_categories_folder = 'data/instance-level_human_parsing/Validation/LIP_Category_ids'
+
 train_images_folder = 'data/instance-level_human_parsing/Training/Images'
 train_categories_folder = 'data/instance-level_human_parsing/Training/Category_ids'
 valid_images_folder = 'data/instance-level_human_parsing/Validation/Images'
@@ -55,10 +60,14 @@ class DataGenSequence(Sequence):
         self.usage = usage
 
         if usage == 'train':
-            id_file = 'data/instance-level_human_parsing/Training/train_id.txt'
-            self.images_folder = train_images_folder
-            self.categories_folder = train_categories_folder
+          # id_file = 'data/instance-level_human_parsing/Training/LIP_train_small_dataset.txt'
+          # id_file = 'data/instance-level_human_parsing/Training/LIP_train_id.txt'
+          id_file = 'data/instance-level_human_parsing/Training/train_id.txt'
+          self.images_folder = train_images_folder
+          self.categories_folder = train_categories_folder
         else:
+            # id_file = 'data/instance-level_human_parsing/Validation/LIP_val_small_dataset.txt'
+            # id_file = 'data/instance-level_human_parsing/Validation/LIP_val_id.txt'
             id_file = 'data/instance-level_human_parsing/Validation/val_id.txt'
             self.images_folder = valid_images_folder
             self.categories_folder = valid_categories_folder
