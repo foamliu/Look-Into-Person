@@ -3,9 +3,7 @@ import random
 
 import cv2 as cv
 import numpy as np
-from keras.utils import Sequence
-from keras.utils import to_categorical
-from config import img_rows, img_cols,  color_map
+from app.segment.config import img_rows, img_cols, color_map
 
 
 def get_category(categories_folder, name):

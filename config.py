@@ -5,5 +5,5 @@ img_rows, img_cols = 320, 320
 channel = 3
 num_classes = 20
 
-mat = scipy.io.loadmat('human_colormap.mat')
+mat = scipy.io.loadmat('./app/segment/human_colormap.mat')
 color_map = (mat['colormap'] * 256).astype(np.int32)
