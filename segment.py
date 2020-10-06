@@ -1,8 +1,8 @@
 import os
 
-import cv2 as cv
 import keras.backend as K
 import numpy as np
+from PIL import Image
 
 from app.segment.data_generator import random_choice, safe_crop, to_bgr
 from app.segment.model import build_model
@@ -15,8 +15,11 @@ def segment_image(filename):
     model.load_weights(model_weights_path)
 
     filename = 'app/img/uploads/' + filename
-    image = cv.imread(filename)
-    image = cv.resize(image, (img_rows, img_cols), cv.INTER_CUBIC)
+    image = Image.open(filename)
+
+    size = (img_rows, img_cols)
+    image = image.resize(size)
+
     image_size = image.shape[:2]
 
     x, y = random_choice(image_size)

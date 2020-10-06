@@ -1,5 +1,3 @@
 Keras==2.4.3
 numpy==1.18.5
-opencv-contrib-python==4.4.0.44
-opencv-python==4.4.0.44
 tensorflow==2.3.1
