@@ -230,3 +230,4 @@ app/img/uploads/
 .fuse_*
 myenv/
 app/img
+app/segment
