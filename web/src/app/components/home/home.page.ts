@@ -14,9 +14,10 @@ export class HomePage {
   @ViewChild('file') file: any;
   originalImage = '';
   processedImage = '';
-  selectedColor = 'rgb(255,255,255)';
+  outlineColor = 'rgb(255,255,255)';
   outlineThickness: '0' | '1' | '2' = '0';
-  segmentColor: string;
+  segnetSectionColor: string;
+  serialID: string;
 
   addFiles() {
     this.file.nativeElement.click();
@@ -74,9 +75,10 @@ export class HomePage {
         break;
       }
       case HttpEventType.Response: {
-        if (event.body && event.body.segmentedImage) {
+        if (event.body && event.body.segmentedImage && event.body.serialID) {
           this.originalImage = src;
           this.processedImage = event.body.segmentedImage;
+          this.serialID = event.body.serialID;
           this.dismissLoading();
         } else {
           this.handleError();
@@ -101,7 +103,7 @@ export class HomePage {
 
   onProcessedImageClick(event: any): void {
     const pixelData = this.getPixelData(event);
-    this.segmentColor = `rgba(${pixelData[0]},${pixelData[1]},${pixelData[2]},${pixelData[3]})`;
+    this.segnetSectionColor = `${pixelData[0]},${pixelData[1]},${pixelData[2]}`;
   }
 
   /*
@@ -121,21 +123,25 @@ export class HomePage {
   getOutlineColor(): string {
     // color returns from color picker like "rgb(xx,xx,xx)"
     // Pull the RGB numbers from the string
-    return this.selectedColor.substring(4, this.selectedColor.length - 1);
+    return this.outlineColor.substring(4, this.outlineColor.length - 1);
   }
 
   readyToOutline(): boolean {
-    return !!this.selectedColor && !!this.outlineThickness && !!this.segmentColor;
+    return !!this.outlineColor && !!this.outlineThickness && !!this.segnetSectionColor;
   }
 
   getSegmentColorLabel(): string {
-    return `You selected ${this.segmentColor}, which looks like this:`;
+    return `You selected ${this.segnetSectionColor}, which looks like this:`;
+  }
+
+  changeThickness(event: any) {
+    this.outlineThickness = event.detail.value;
   }
 
   async getOutlinedImages() {
     await this.showLoading();
 
-    this.imageService.getOutlinedImages(this.segmentColor, this.outlineThickness, this.getOutlineColor()).subscribe(
+    this.imageService.getOutlinedImages(this.segnetSectionColor, this.outlineThickness, this.getOutlineColor(), this.serialID).subscribe(
       (event: HttpEvent<any>) => {
         this.handleResponseForOutlinedImages(event);
       },

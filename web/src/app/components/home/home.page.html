@@ -34,8 +34,8 @@
         </ion-col>
         <ion-col>
           <input
-            [(colorPicker)]="selectedColor"
-            [style.background]="selectedColor"
+            [(colorPicker)]="outlineColor"
+            [style.background]="outlineColor"
             cpPosition="top-left"
             cpOutputFormat="rgba"
             cpAlphaChannel="disabled"
@@ -47,7 +47,7 @@
           <ion-label>Select an outline thickness</ion-label>
         </ion-col>
         <ion-col>
-          <ion-select interface="popover" name="outlineThickness" [value]="outlineThickness">
+          <ion-select interface="popover" name="outlineThickness" value="outlineThickness" (ionChange)="changeThickness($event)">
             <ion-select-option value="0">Small</ion-select-option>
             <ion-select-option value="1">Medium</ion-select-option>
             <ion-select-option value="2">Large</ion-select-option>
@@ -57,9 +57,9 @@
       <ion-row>
         <ion-col>Click the processed image to select the section to outline</ion-col>
         <ion-col>
-          <ion-row *ngIf="segmentColor" class="selected-segment-row">
+          <ion-row *ngIf="segnetSectionColor" class="selected-segment-row">
             <ion-col>{{ getSegmentColorLabel() }}</ion-col>
-            <ion-col class="segment-color" [style.background]="segmentColor"></ion-col>
+            <ion-col class="segment-color" [style.background]="segnetSectionColor"></ion-col>
           </ion-row>
         </ion-col>
       </ion-row>

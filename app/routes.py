@@ -1,15 +1,14 @@
+import random
+import string
+
 from flask import send_from_directory, send_file, request, json, url_for
 from app import app
 from app.process.seg import img_process
-from app.tools.dirs import save_upload, save_processed
+from app.tools.dirs import save_upload, save_processed, get_original, get_segmented
 from app.process.outline import *
 from PIL import Image
 import os
 from app.process.base64conversion import *
-
-
-def json_response(payload, status=200):
-    return json.dumps(payload), status, {'content-type': 'application/json'}
 
 
 @app.route('/')
@@ -21,79 +20,57 @@ def index():
 # delete img after processing
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
-
     b64_string = request.form['image']
     filename = request.form['fileName']
 
+    serial_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+    extension = filename.rsplit('.', 1)[1].lower()
     image = fromBase64(b64_string)
-    image.filename = filename
+    image.filename = serial_id + '.' + extension
 
     fileinfo = save_upload(image)
     img_data = img_process(fileinfo[0])
     pro_img = save_processed(img_data, fileinfo[1])
 
     processed_base64 = toBase64(Image.open(pro_img))
-    return json_response({'segmentedImage': getHTML(processed_base64)})
+    return json.jsonify(segmentedImage=getHTML(processed_base64), serialID=serial_id)
 
-@app.route('/select_segment', methods=['GET', 'POST'])
+
+@app.route('/outline', methods=['GET', 'POST'])
 def select_segment():
-    if request.method == 'GET':
-        img_seg = Image.open('app/img/dress0_seg.png')
-        img = Image.open('app/img/dress0.png')
-        outline = getOutline(img_seg,(85, 0, 0))
-        imgSegOutlined = pasteOutline(img_seg,outline)
-        b64_seg = toBase64(imgSegOutlined)
+    seg_rgb = request.form['segmentColor']
+    seg_rgb_tuple = tuple(map(int, seg_rgb.split(',')))
+    outline_color = request.form['outlineColor']
+    outline_rgb_tuple = tuple(map(int, outline_color.split(',')))
+    outline_thickness = request.form['outlineThickness']
+    outline_thickness_int = int(outline_thickness)
+    serial_id = request.form['serialID']
 
-        imgOutlined = pasteOutline(img, outline)
-        b64 = toBase64(imgOutlined)
-        html = getHTML(b64) + getHTML(b64_seg)
-        return html
+    seg_image_path = get_segmented(serial_id)
+    orig_image_path = get_original(serial_id)
+    seg_img = Image.open(seg_image_path)
+    img_outline = get_outline2(seg_img, seg_rgb_tuple)
+    orig_image = Image.open(orig_image_path)
+    orig_image = paste_outline2(orig_image, img_outline, outline_rgb_tuple, outline_thickness_int)
+    seg_img = paste_outline2(seg_img, img_outline, outline_rgb_tuple, outline_thickness_int)
 
-    else:
-        #sessionId = request.data['sessionID']
-        segRGB = request.data['segRGB']  # RGB is the color of the segment.  Use a 3-element tupple. e.g. (0, 255, 255)
-        seg_image = request.data['seg_image_name']  #this should correspond with the file name on the server
-        orig_image = request.data['orig_image_name']
-        # fs_path = ?????
-        #img = Image(fs_path)  #the argument for this constructor expects a file system path
-        #img_outline = getOutline(img, (85, 0, 0))
-        #pasteOutline(originalFile, img_outline)
-        #pasteOutline(img, img_outline)
+    orig_image.save(orig_image_path)
+    seg_img.save(seg_image_path)
 
-        # at this point seg_image and orig_image are both outlined - they can be returned (let me know if you need them as thumbnails
+    seg_img = getHTML(toBase64(Image.open(seg_image_path)))
+    orig_image = getHTML(toBase64(Image.open(orig_image_path)))
+
+    return json.jsonify(originalOutline=orig_image, segmentedOutline=seg_img)
+
 
 @app.route('/download_image', methods=['POST'])
 def download_image():
     # sessionId = request.data['sessionID']
-    files = request.data['files']  #I'm expecting a list here
+    files = request.data['files']  # I'm expecting a list here
 
-    #for f in files:
-        #base64-ify image (not sure how to pass multiple)
+    # for f in files:
+    # base64-ify image (not sure how to pass multiple)
 
-@app.route('/demo', methods=['GET', 'POST'])
-def demo():
-    html = ""
-    for i in range(0,5,1):
-        img = Image.open('app/img/dress' + str(i) + '.png')
-        b64 = toBase64(img)
-        link = '<a href=' + url_for('demo_result') + '?img=' + str(i) + '>' + getHTML(b64) + '<a/>'
-        html = html + link
-    return html
-
-@app.route('/demo_result', methods=['GET', 'POST'])
-def demo_result():
-    if request.method == 'GET':
-        img_number = request.args['img']
-        img_seg = Image.open('app/img/dress' + str(img_number) + '_seg.png')
-        img = Image.open('app/img/dress' + str(img_number) + '.png')
-        outline = getOutline(img_seg,(85, 0, 0))
-        imgSegOutlined = pasteOutline(img_seg,outline)
-        b64_seg = toBase64(imgSegOutlined)
-
-        imgOutlined = pasteOutline(img, outline)
-        b64 = toBase64(imgOutlined)
-        html = getHTML(b64) + getHTML(b64_seg)
-        return html
 
 @app.route('/<path:path>')
 def send_js(path):

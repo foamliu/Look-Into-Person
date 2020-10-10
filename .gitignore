@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Model extensions
+*.hdf5
+
 # C extensions
 *.so
 
@@ -16,6 +19,8 @@ eggs/
 .eggs/
 lib/
 lib64/
+Lib/
+Scripts/
 parts/
 sdist/
 var/
@@ -26,6 +31,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+pyvenv.cfg
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -83,6 +89,7 @@ ipython_config.py
 
 # pyenv
 .python-version
+
 
 # pipenv
 #   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
@@ -225,9 +232,14 @@ node_modules
 share/
 bin/
 pyenv.cfg
+pyvenv.cfg
+pyvenv.cfg*
 app/img/uploads/
 .angulardoc.json
 .fuse_*
 myenv/
 app/img
 app/segment
+app/process/segnet/
+Scripts/
+bootstrap.*

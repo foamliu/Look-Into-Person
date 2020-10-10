@@ -71,12 +71,13 @@ export class ImageService {
     return this.post(url, formData, { observe: 'events', reportProgress: true });
   }
 
-  getOutlinedImages(segmentColor: string, outlineColor: string, outlineThickness: string): Observable<any> {
+  getOutlinedImages(segmentColor: string, outlineThickness: string, outlineColor: string, serialID: string): Observable<any> {
     const formData = new FormData();
     formData.append('segmentColor', segmentColor);
     formData.append('outlineColor', outlineColor);
     formData.append('outlineThickness', outlineThickness);
+    formData.append('serialID', serialID);
 
-    return this.post(this.buildUrl('/segment'), formData, { observe: 'events', reportProgress: true });
+    return this.post(this.buildUrl('/outline'), formData, { observe: 'events', reportProgress: true });
   }
 }

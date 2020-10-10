@@ -95,21 +95,23 @@ describe('ImageService', () => {
     expect(service.post).toHaveBeenCalledWith('/upload', expectedForm, { observe: 'events', reportProgress: true });
   });
 
-  test('Should request outlined images with segment color, outline color, and outline thickness', () => {
+  test('Should request outlined images with segment color, outline color, outline thickness, and serial ID', () => {
     jest.spyOn(service, 'post').mockImplementation();
 
-    const segmentColor = 'rgba(255,255,255,1';
+    const segmentColor = '255,255,255,1';
     const outlineColor = '55,55,55';
     const outlineThickness = '1';
+    const serialID = 'CornFlakes';
 
     const expectedForm = new FormData();
 
     expectedForm.append('segmentColor', segmentColor);
     expectedForm.append('outlineColor', outlineColor);
     expectedForm.append('outlineThickness', outlineThickness);
+    expectedForm.append('serialID', serialID);
 
-    service.getOutlinedImages(segmentColor, outlineColor, outlineThickness);
+    service.getOutlinedImages(segmentColor, outlineThickness, outlineColor, serialID);
 
-    expect(service.post).toHaveBeenCalledWith('/segment', expectedForm, { observe: 'events', reportProgress: true });
+    expect(service.post).toHaveBeenCalledWith('/outline', expectedForm, { observe: 'events', reportProgress: true });
   });
 });

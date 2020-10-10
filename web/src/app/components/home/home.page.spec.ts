@@ -97,12 +97,13 @@ describe('HomePage', () => {
 
   test('Should handle an HttpResponse when uploading an image', () => {
     const response = new HttpResponse({
-      body: { segmentedImage: 'b64String' }
+      body: { segmentedImage: 'b64String', serialID: 'FrostedFlakes' }
     });
 
     component.handleResponseForUploadImage(response, 'mockFileSrc');
     expect(component.originalImage).toEqual('mockFileSrc');
     expect(component.processedImage).toEqual('b64String');
+    expect(component.serialID).toEqual('FrostedFlakes');
     expect(component.dismissLoading).toHaveBeenCalled();
   });
 
@@ -130,16 +131,17 @@ describe('HomePage', () => {
 
     component.onProcessedImageClick('mockEvent');
 
-    expect(component.segmentColor).toEqual('rgba(25,72,255,1)');
+    expect(component.segnetSectionColor).toEqual('25,72,255');
   });
 
   describe('requesting outlined images', () => {
     beforeEach(() => {
-      component.segmentColor = 'rgba(255,255,11,0.4)';
+      component.segnetSectionColor = '255,255,11';
       component.outlineThickness = '1';
-      component.selectedColor = 'rgb(66,66,66)';
+      component.outlineColor = 'rgb(66,66,66)';
       component.originalImage = 'original1';
       component.processedImage = 'processed1';
+      component.serialID = 'FrostedFlakes';
     });
 
     test('Should request outlined images and handle the response', fakeAsync(() => {
@@ -210,7 +212,7 @@ describe('HomePage', () => {
       component.getOutlinedImages();
       tick();
 
-      expect(imageService.getOutlinedImages).toHaveBeenCalledWith('rgba(255,255,11,0.4)', '1', '66,66,66');
+      expect(imageService.getOutlinedImages).toHaveBeenCalledWith('255,255,11', '1', '66,66,66', 'FrostedFlakes');
       expect(component.originalImage).toEqual('original1');
       expect(component.processedImage).toEqual('processed1');
       expect(component.handleError).toHaveBeenCalled();
