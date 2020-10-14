@@ -2,7 +2,7 @@ import tensorflow.keras.backend as K
 from tensorflow.keras.layers import Input, Conv2D, UpSampling2D, BatchNormalization, MaxPooling2D, Reshape, Concatenate
 from tensorflow.keras.models import Model
 
-from app.process.segnet.unpooling_layer import Unpooling
+from app.process.segnet.custom_layers.unpooling_layer import Unpooling
 
 
 def build_model():
