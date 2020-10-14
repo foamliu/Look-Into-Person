@@ -1,15 +1,6 @@
-import os
 import random
-
-import cv2 as cv
 import numpy as np
 from app.process.segnet.config import img_rows, img_cols, color_map
-
-
-def get_category(categories_folder, name):
-    filename = os.path.join(categories_folder, name + '.png')
-    semantic = cv.imread(filename, 0)
-    return semantic
 
 
 def to_bgr(y_pred):
