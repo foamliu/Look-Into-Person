@@ -3,7 +3,7 @@ import string
 
 from flask import send_from_directory, send_file, request, json, url_for
 from app import app
-from app.process.seg import img_process
+from app.process.segnet.segment import img_process
 from app.tools.dirs import save_upload, save_processed, get_original, get_segmented
 from app.process.outline import *
 from PIL import Image
