@@ -5,3 +5,5 @@ data/
 models/
 logs/
 images/
+*.jpg
+myenv/
