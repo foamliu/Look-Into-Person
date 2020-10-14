@@ -3,7 +3,7 @@ import random
 
 import cv2 as cv
 import numpy as np
-from app.segment.config import img_rows, img_cols, color_map
+from app.process.segnet.config import img_rows, img_cols, color_map
 
 
 def get_category(categories_folder, name):

@@ -2,7 +2,7 @@ import keras.backend as K
 from keras.layers import Input, Conv2D, UpSampling2D, BatchNormalization, MaxPooling2D, Reshape, Concatenate
 from keras.models import Model
 
-from app.segment.custom_layers.unpooling_layer import Unpooling
+from app.process.segnet.custom_layers.unpooling_layer import Unpooling
 
 
 def build_model():
