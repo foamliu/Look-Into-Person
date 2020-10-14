@@ -18,7 +18,7 @@ def index():
 
 
 # delete img after processing
-@app.route('/upload', methods=['GET', 'POST'])
+@app.route('/segment', methods=['GET', 'POST'])
 def upload_file():
     b64_string = request.form['image']
     filename = request.form['fileName']

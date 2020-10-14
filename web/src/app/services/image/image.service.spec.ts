@@ -27,7 +27,7 @@ describe('ImageService', () => {
 
     test('Should make an HTTP POST request', () => {
       const expectedResponse = { mockResponse: 'mockResponse' };
-      const url = '/upload';
+      const url = '/segment';
 
       const formData = new FormData();
       formData.append('image', 'mockSrc');
@@ -81,7 +81,7 @@ describe('ImageService', () => {
     expect(service.setLoadingText).toHaveBeenCalledWith('Downloading... 78%');
   });
 
-  test('Should accept an image to upload and make a POST request', () => {
+  test('Should accept an image to upload for segmentation and make a POST request', () => {
     jest.spyOn(service, 'post').mockImplementation();
 
     const src = 'mockSrc';
@@ -92,7 +92,7 @@ describe('ImageService', () => {
 
     service.uploadImage(src, file.name);
 
-    expect(service.post).toHaveBeenCalledWith('/upload', expectedForm, { observe: 'events', reportProgress: true });
+    expect(service.post).toHaveBeenCalledWith('/segment', expectedForm, { observe: 'events', reportProgress: true });
   });
 
   test('Should request outlined images with segment color, outline color, outline thickness, and serial ID', () => {

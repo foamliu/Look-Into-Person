@@ -66,7 +66,7 @@ export class ImageService {
 
     formData.append('image', src);
     formData.append('fileName', fileName);
-    const url = this.buildUrl('/upload');
+    const url = this.buildUrl('/segment');
 
     return this.post(url, formData, { observe: 'events', reportProgress: true });
   }
