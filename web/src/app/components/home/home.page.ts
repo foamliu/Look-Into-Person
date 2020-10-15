@@ -14,7 +14,7 @@ export class HomePage {
   @ViewChild('file') file: any;
   originalImage = '';
   processedImage = '';
-  outlineColor = 'rgb(255,255,255)';
+  outlineColor = '#ffffff';
   outlineThickness: '0' | '1' | '2' = '0';
   segnetSectionColor: string;
   serialID: string;
@@ -103,7 +103,7 @@ export class HomePage {
 
   onProcessedImageClick(event: any): void {
     const pixelData = this.getPixelData(event);
-    this.segnetSectionColor = `${pixelData[0]},${pixelData[1]},${pixelData[2]}`;
+    this.segnetSectionColor = this.convertFromRGBAToHex(pixelData);
   }
 
   /*
@@ -120,10 +120,26 @@ export class HomePage {
     return canvas.getContext('2d').getImageData(event.offsetX, event.offsetY, 1, 1).data;
   }
 
-  getOutlineColor(): string {
-    // color returns from color picker like "rgb(xx,xx,xx)"
-    // Pull the RGB numbers from the string
-    return this.outlineColor.substring(4, this.outlineColor.length - 1);
+  convertFromRGBAToHex(rgb: any[]) {
+    let [r, g, b] = rgb;
+
+    r = r.toString(16);
+    g = g.toString(16);
+    b = b.toString(16);
+
+    if (r.length === 1) {
+      r = '0' + r;
+    }
+
+    if (g.length === 1) {
+      g = '0' + g;
+    }
+
+    if (b.length === 1) {
+      b = '0' + b;
+    }
+
+    return '#' + r + g + b;
   }
 
   readyToOutline(): boolean {
@@ -141,7 +157,7 @@ export class HomePage {
   async getOutlinedImages() {
     await this.showLoading();
 
-    this.imageService.getOutlinedImages(this.segnetSectionColor, this.outlineThickness, this.getOutlineColor(), this.serialID).subscribe(
+    this.imageService.getOutlinedImages(this.segnetSectionColor, this.outlineThickness, this.outlineColor, this.serialID).subscribe(
       (event: HttpEvent<any>) => {
         this.handleResponseForOutlinedImages(event);
       },

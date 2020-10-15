@@ -126,19 +126,11 @@ describe('HomePage', () => {
     expect(component.handleError).toHaveBeenCalled();
   });
 
-  test('Should convert pixel data to an rgba color string', () => {
-    jest.spyOn(component, 'getPixelData').mockReturnValue([25, 72, 255, 1]);
-
-    component.onProcessedImageClick('mockEvent');
-
-    expect(component.segnetSectionColor).toEqual('25,72,255');
-  });
-
   describe('requesting outlined images', () => {
     beforeEach(() => {
-      component.segnetSectionColor = '255,255,11';
+      component.segnetSectionColor = '#ff0099';
       component.outlineThickness = '1';
-      component.outlineColor = 'rgb(66,66,66)';
+      component.outlineColor = '#000154';
       component.originalImage = 'original1';
       component.processedImage = 'processed1';
       component.serialID = 'FrostedFlakes';
@@ -212,7 +204,7 @@ describe('HomePage', () => {
       component.getOutlinedImages();
       tick();
 
-      expect(imageService.getOutlinedImages).toHaveBeenCalledWith('255,255,11', '1', '66,66,66', 'FrostedFlakes');
+      expect(imageService.getOutlinedImages).toHaveBeenCalledWith('#ff0099', '1', '#000154', 'FrostedFlakes');
       expect(component.originalImage).toEqual('original1');
       expect(component.processedImage).toEqual('processed1');
       expect(component.handleError).toHaveBeenCalled();

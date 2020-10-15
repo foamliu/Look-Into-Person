@@ -1,4 +1,4 @@
-from PIL import Image, ImageFilter, ImageDraw
+from PIL import Image, ImageFilter, ImageDraw, ImageColor
 
 
 def get_outline(source_image, RGB):
@@ -18,10 +18,12 @@ def get_outline(source_image, RGB):
     return outline
 
 
-def get_outline2(source_image, RGB):
+def get_outline2(source_image, color):
     outline_image = source_image.copy()
     rows, columns = source_image.size
     coords = []
+
+    RGB = ImageColor.getrgb(color)
 
     for r in range(0, rows):  # iterates over source image one pixel at a time
         for c in range(0, columns):
@@ -59,9 +61,10 @@ def paste_outline(original_file, edge_file):
 def paste_outline2(target_image, outline_list, color, thickness):
     # this method overwrites the target_image
     draw = ImageDraw.Draw(target_image)
+    rgb_color = ImageColor.getrgb(color)
     for r, c in outline_list:
-        target_image.putpixel((r, c), color)
-        draw.rectangle([r - thickness, c - thickness, r + thickness, c + thickness], color)
+        target_image.putpixel((r, c), rgb_color)
+        draw.rectangle([r - thickness, c - thickness, r + thickness, c + thickness], rgb_color)
 
     return target_image
 

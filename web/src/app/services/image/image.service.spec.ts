@@ -98,8 +98,8 @@ describe('ImageService', () => {
   test('Should request outlined images with segment color, outline color, outline thickness, and serial ID', () => {
     jest.spyOn(service, 'post').mockImplementation();
 
-    const segmentColor = '255,255,255,1';
-    const outlineColor = '55,55,55';
+    const segmentColor = '#ff0099';
+    const outlineColor = '#000154';
     const outlineThickness = '1';
     const serialID = 'CornFlakes';
 
