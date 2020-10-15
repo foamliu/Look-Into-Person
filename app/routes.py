@@ -47,10 +47,10 @@ def select_segment():
     seg_image_path = get_segmented(serial_id)
     orig_image_path = get_original(serial_id)
     seg_img = Image.open(seg_image_path)
-    img_outline = get_outline2(seg_img, seg_rgb)
+    img_outline = get_outline(seg_img, seg_rgb)
     orig_image = Image.open(orig_image_path)
-    orig_image = paste_outline2(orig_image, img_outline, outline_color, outline_thickness_int)
-    seg_img = paste_outline2(seg_img, img_outline, outline_color, outline_thickness_int)
+    orig_image = paste_outline(orig_image, img_outline, outline_color, outline_thickness_int)
+    seg_img = paste_outline(seg_img, img_outline, outline_color, outline_thickness_int)
 
     orig_image.save(orig_image_path)
     seg_img.save(seg_image_path)
