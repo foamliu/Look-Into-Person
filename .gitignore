@@ -243,3 +243,4 @@ app/segment
 app/process/segnet/
 Scripts/
 bootstrap.*
+newenv/
