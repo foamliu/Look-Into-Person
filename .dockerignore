@@ -1,0 +1,9 @@
+myenv
+newenv
+node_modules
+.github
+.idea
+dist
+app/img
+app/process/segnet
+web/node_modules
