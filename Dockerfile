@@ -38,4 +38,4 @@ RUN npm run build
 # Deploy the application on port 8080
 WORKDIR /usr/src/app/automatic-apparel-outliner
 EXPOSE 8080
-CMD ["gunicorn", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "app:app"]
