@@ -1,14 +1,14 @@
 import random
 import string
 
-from flask import send_from_directory, send_file, request, json, url_for
+from flask import send_from_directory, send_file, request, json
 from app import app
 from app.process.segnet.segment import img_process
 from app.tools.dirs import save_upload, save_processed, get_original, get_segmented
 from app.process.outline import *
-from PIL import Image
-import os
 from app.process.base64conversion import *
+from PIL import Image  # Delete once purged of pillow
+import cv2.cv2 as cv2
 
 
 @app.route('/')
@@ -21,19 +21,19 @@ def index():
 @app.route('/segment', methods=['GET', 'POST'])
 def upload_file():
     b64_string = request.form['image']
-    filename = request.form['fileName']
 
     serial_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
-    extension = filename.rsplit('.', 1)[1].lower()
-    image = fromBase64(b64_string)
-    image.filename = serial_id + '.' + extension
+    filename = serial_id + '.png'
+    image = from_base64(b64_string)
 
-    fileinfo = save_upload(image)
-    img_data = img_process(fileinfo[0])
-    pro_img = save_processed(img_data, fileinfo[1])
+    file_info = save_upload(image, filename)
+    img_data = img_process(file_info[0])
+    pro_img = save_processed(img_data, file_info[1])
 
-    processed_base64 = toBase64(Image.open(pro_img))
-    return json.jsonify(segmentedImage=getHTML(processed_base64), serialID=serial_id)
+    processed_base64 = to_base64(pro_img)
+    temp = from_base64(processed_base64)
+    cv2.imwrite('temp.png', temp)
+    return json.jsonify(segmentedImage=get_html(processed_base64), serialID=serial_id)
 
 
 @app.route('/outline', methods=['GET', 'POST'])
@@ -55,19 +55,14 @@ def select_segment():
     orig_image.save(orig_image_path)
     seg_img.save(seg_image_path)
 
-    seg_img = getHTML(toBase64(Image.open(seg_image_path)))
-    orig_image = getHTML(toBase64(Image.open(orig_image_path)))
+    seg_img = get_html(to_base64(seg_image_path))
+    orig_image = get_html(to_base64(orig_image_path))
 
     return json.jsonify(originalOutline=orig_image, segmentedOutline=seg_img)
 
 
-@app.route('/download_image', methods=['POST'])
-def download_image():
-    # sessionId = request.data['sessionID']
-    files = request.data['files']  # I'm expecting a list here
-
-    # for f in files:
-    # base64-ify image (not sure how to pass multiple)
+# @app.route('/download_image', methods=['POST'])
+# def download_image():
 
 
 @app.route('/<path:path>')

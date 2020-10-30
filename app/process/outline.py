@@ -1,4 +1,5 @@
-from PIL import Image, ImageFilter, ImageDraw, ImageColor
+from PIL import ImageFilter, ImageDraw, ImageColor
+
 
 def get_outline(source_image, color):
     outline_image = source_image.copy()
@@ -39,11 +40,3 @@ def paste_outline(target_image, outline_list, color, thickness):
 
     return target_image
 
-
-if __name__ == "__main__":
-    image = Image.open('../img/dress0_seg.png')
-    img = image.copy()  # create a copy of the original image to protect the original file against coding errors
-
-    outline = get_outline(img, (85, 0, 0))
-    paste_outline(img, outline, (0, 0, 255), 5)
-    img.show()

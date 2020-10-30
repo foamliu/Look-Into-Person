@@ -22,7 +22,7 @@ lib64/
 Lib/
 Scripts/
 parts/
-sdist/
+dist/
 var/
 wheels/
 pip-wheel-metadata/

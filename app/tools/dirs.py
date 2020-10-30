@@ -1,12 +1,11 @@
-from os.path import join, dirname, realpath, isdir, split, basename
-from app import app
+from os.path import join, dirname, realpath, isdir, split
 from werkzeug.utils import secure_filename
 from os import makedirs, listdir
-from PIL import Image
+import cv2.cv2 as cv2
 
-basepath = split(dirname(realpath(__file__)))
-UPLOAD_FOLDER = join(basepath[0], 'img/uploads')
-PROCESSED_FOLDER = join(basepath[0], 'img/processed')
+base_path = split(dirname(realpath(__file__)))
+UPLOAD_FOLDER = join(base_path[0], 'img/uploads')
+PROCESSED_FOLDER = join(base_path[0], 'img/processed')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp'}
 
 
@@ -15,15 +14,15 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def save_upload(f):
-    if f and allowed_file(f.filename):
-        filename = secure_filename(f.filename)
+def save_upload(image_data, filename):
+    if allowed_file(filename):
+        filename = secure_filename(filename)
         curr_img_path = join(UPLOAD_FOLDER, filename)
         if isdir(UPLOAD_FOLDER):
-            f.save(curr_img_path)
+            cv2.imwrite(curr_img_path, image_data)
         else:
             makedirs(UPLOAD_FOLDER)
-            f.save(curr_img_path)
+            cv2.imwrite(curr_img_path, image_data)
         return [curr_img_path, filename]
     else:
         return 'Incompatible File'
@@ -32,13 +31,11 @@ def save_upload(f):
 def save_processed(img_data, img_name):
     curr_pro_img_path = join(PROCESSED_FOLDER, img_name)
     if isdir(PROCESSED_FOLDER):
-        processed_image = Image.fromarray(img_data)
-        processed_image.save(curr_pro_img_path)
+        cv2.imwrite(curr_pro_img_path, img_data)
         return curr_pro_img_path
     else:
         makedirs(PROCESSED_FOLDER)
-        processed_image = Image.fromarray(img_data)
-        processed_image.save(curr_pro_img_path)
+        cv2.imwrite(curr_pro_img_path, img_data)
         return curr_pro_img_path
 
 
