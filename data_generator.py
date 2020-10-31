@@ -31,3 +31,4 @@ def safe_crop(mat, x, y):
     h, w = crop.shape[:2]
     ret[0:h, 0:w] = crop
     return ret
+
