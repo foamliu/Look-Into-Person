@@ -244,3 +244,5 @@ app/process/segnet/
 Scripts/
 bootstrap.*
 newenv/
+sandbox.py
+temp/
