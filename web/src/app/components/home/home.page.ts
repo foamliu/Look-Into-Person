@@ -2,6 +2,7 @@ import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { ImageService } from 'src/app/services/image/image.service';
+import { ImageLabel } from '../../../assets/constants';
 
 @Component({
   selector: 'home',
@@ -13,7 +14,9 @@ export class HomePage {
   constructor(private imageService: ImageService, private loadingCtrl: LoadingController, private toastCtrl: ToastController) {}
   @ViewChild('file') file: any;
   originalImage = '';
-  processedImage = '';
+  segmentedImage = '';
+  originalImageWithOutline = '';
+  segmentedImageWithOutline = '';
   outlineColor = '#ffffff';
   outlineThickness: '0' | '1' | '2' = '0';
   segnetSectionColor: string;
@@ -77,7 +80,7 @@ export class HomePage {
       case HttpEventType.Response: {
         if (event.body && event.body.segmentedImage && event.body.serialID) {
           this.originalImage = src;
-          this.processedImage = event.body.segmentedImage;
+          this.segmentedImage = event.body.segmentedImage;
           this.serialID = event.body.serialID;
           this.dismissLoading();
         } else {
@@ -102,8 +105,10 @@ export class HomePage {
   }
 
   onProcessedImageClick(event: any): void {
-    const pixelData = this.getPixelData(event);
-    this.segnetSectionColor = this.convertFromRGBAToHex(pixelData);
+    if (!this.segmentedImageWithOutline) {
+      const pixelData = this.getPixelData(event);
+      this.segnetSectionColor = this.convertFromRGBAToHex(pixelData);
+    }
   }
 
   /*
@@ -150,6 +155,26 @@ export class HomePage {
     return `You selected ${this.segnetSectionColor}, which looks like this:`;
   }
 
+  getLabelForOriginalImage(): string {
+    return !!this.originalImageWithOutline ? ImageLabel.OutlinedOriginal : ImageLabel.Original;
+  }
+
+  getLabelForSegmentedImage(): string {
+    return !!this.segmentedImageWithOutline ? ImageLabel.OutlinedSegmented : ImageLabel.Segmented;
+  }
+
+  getImageStringForOriginalImage(): string {
+    if (!!this.originalImage) {
+      return !!this.originalImageWithOutline ? this.originalImageWithOutline : this.originalImage;
+    }
+  }
+
+  getImageStringForSegmentedImage(): string {
+    if (!!this.segmentedImage) {
+      return !!this.segmentedImageWithOutline ? this.segmentedImageWithOutline : this.segmentedImage;
+    }
+  }
+
   changeThickness(event: any) {
     this.outlineThickness = event.detail.value;
   }
@@ -165,6 +190,11 @@ export class HomePage {
     );
   }
 
+  clearOutline(): void {
+    this.segmentedImageWithOutline = '';
+    this.originalImageWithOutline = '';
+  }
+
   handleResponseForOutlinedImages(event: HttpEvent<any>) {
     switch (event.type) {
       case HttpEventType.UploadProgress: {
@@ -177,8 +207,8 @@ export class HomePage {
       }
       case HttpEventType.Response: {
         if (event.body && event.body.originalOutline && event.body.segmentedOutline) {
-          this.originalImage = event.body.originalOutline;
-          this.processedImage = event.body.segmentedOutline;
+          this.originalImageWithOutline = event.body.originalOutline;
+          this.segmentedImageWithOutline = event.body.segmentedOutline;
           this.dismissLoading();
         } else {
           this.handleError();

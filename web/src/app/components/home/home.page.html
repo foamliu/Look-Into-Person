@@ -16,18 +16,18 @@
       <ion-button id="upload" (click)="addFiles()">Select a file</ion-button>
     </ion-row>
     <ion-row *ngIf="!!originalImage">
-      <ion-col>Original Image</ion-col>
-      <ion-col>Processed Image</ion-col>
+      <ion-col>{{ getLabelForOriginalImage() }}</ion-col>
+      <ion-col>{{ getLabelForSegmentedImage() }}</ion-col>
     </ion-row>
     <ion-row *ngIf="!!originalImage" class="image-container">
       <ion-col class="image">
-        <img [src]="originalImage" />
+        <img [src]="getImageStringForOriginalImage()" />
       </ion-col>
       <ion-col>
-        <img id="processedImage" [src]="processedImage" (click)="onProcessedImageClick($event)" />
+        <img id="processedImage" [src]="getImageStringForSegmentedImage()" (click)="onProcessedImageClick($event)" />
       </ion-col>
     </ion-row>
-    <div *ngIf="processedImage">
+    <div *ngIf="segmentedImage && !segmentedImageWithOutline">
       <ion-row>
         <ion-col>
           <ion-label>Select an outline color</ion-label>
@@ -63,8 +63,11 @@
           </ion-row>
         </ion-col>
       </ion-row>
-      <ion-button [disabled]="!readyToOutline()" (click)="getOutlinedImages()">Get outlined images</ion-button>
+      <ion-button *ngIf="!segmentedImageWithOutline" [disabled]="!readyToOutline()" (click)="getOutlinedImages()"
+        >Outline Selected Segment</ion-button
+      >
     </div>
+    <ion-button *ngIf="!!segmentedImageWithOutline && !!originalImageWithOutline" (click)="clearOutline()">Clear Outlines</ion-button>
   </ion-grid>
 </ion-content>
 

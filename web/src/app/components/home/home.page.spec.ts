@@ -3,6 +3,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { throwError } from 'rxjs';
+import { ImageLabel } from 'src/assets/constants';
 import { ToastControllerMock } from 'src/jest-mocks/toast-controller';
 import { ImageServiceMock } from '../../../jest-mocks/image.service';
 import { ImageService } from '../../services/image/image.service';
@@ -102,7 +103,7 @@ describe('HomePage', () => {
 
     component.handleResponseForUploadImage(response, 'mockFileSrc');
     expect(component.originalImage).toEqual('mockFileSrc');
-    expect(component.processedImage).toEqual('b64String');
+    expect(component.segmentedImage).toEqual('b64String');
     expect(component.serialID).toEqual('FrostedFlakes');
     expect(component.dismissLoading).toHaveBeenCalled();
   });
@@ -114,7 +115,7 @@ describe('HomePage', () => {
 
     component.handleResponseForUploadImage(response, 'mockFileSrc');
     expect(component.originalImage).toBe('');
-    expect(component.processedImage).toBe('');
+    expect(component.segmentedImage).toBe('');
     expect(component.handleError).toHaveBeenCalled();
   });
 
@@ -132,7 +133,7 @@ describe('HomePage', () => {
       component.outlineThickness = '1';
       component.outlineColor = '#000154';
       component.originalImage = 'original1';
-      component.processedImage = 'processed1';
+      component.segmentedImage = 'processed1';
       component.serialID = 'FrostedFlakes';
     });
 
@@ -182,22 +183,27 @@ describe('HomePage', () => {
 
       component.handleResponseForOutlinedImages(response);
 
-      expect(component.originalImage).toEqual('outlined1');
-      expect(component.processedImage).toEqual('outlined2');
+      expect(component.originalImage).toEqual('original1');
+      expect(component.segmentedImage).toEqual('processed1');
+      expect(component.originalImageWithOutline).toEqual('outlined1');
+      expect(component.segmentedImageWithOutline).toEqual('outlined2');
       expect(component.dismissLoading).toHaveBeenCalled();
     });
 
     test('Should request outlined images and handle an error and not change the images if the expected data is not returned', () => {
       const response = new HttpResponse({
-        body: { original: 'outlined1', sgemented: 'outlined2' }
+        body: { badOriginal: 'outlined1', badOutline: 'outlined2' }
       });
 
       component.handleResponseForOutlinedImages(response);
 
       expect(component.originalImage).toEqual('original1');
-      expect(component.processedImage).toEqual('processed1');
+      expect(component.segmentedImage).toEqual('processed1');
+      expect(component.originalImageWithOutline).toEqual('');
+      expect(component.segmentedImageWithOutline).toEqual('');
       expect(component.handleError).toHaveBeenCalled();
     });
+
     test('Should request outlined images and handle an error and not change the images if there is an Http error', fakeAsync(() => {
       jest.spyOn(imageService, 'getOutlinedImages').mockReturnValue(throwError('error'));
 
@@ -206,8 +212,100 @@ describe('HomePage', () => {
 
       expect(imageService.getOutlinedImages).toHaveBeenCalledWith('#ff0099', '1', '#000154', 'FrostedFlakes');
       expect(component.originalImage).toEqual('original1');
-      expect(component.processedImage).toEqual('processed1');
+      expect(component.segmentedImage).toEqual('processed1');
+      expect(component.originalImageWithOutline).toEqual('');
+      expect(component.segmentedImageWithOutline).toEqual('');
       expect(component.handleError).toHaveBeenCalled();
     }));
+  });
+
+  test("Should show a label of 'Outlined Original Image' when there is an outline on the original", () => {
+    component.originalImage = 'original';
+    component.originalImageWithOutline = 'originalWithOutline';
+
+    jest.spyOn(component, 'getLabelForOriginalImage');
+
+    component.getLabelForOriginalImage();
+
+    expect(component.getLabelForOriginalImage).toReturnWith(ImageLabel.OutlinedOriginal);
+  });
+
+  test("Should show a label of 'Original Image' when there is not an outline on the original", () => {
+    component.originalImage = 'original';
+    component.originalImageWithOutline = '';
+
+    jest.spyOn(component, 'getLabelForOriginalImage');
+
+    component.getLabelForOriginalImage();
+
+    expect(component.getLabelForOriginalImage).toReturnWith(ImageLabel.Original);
+  });
+
+  test("Should show a label of 'Outlined Segmented Image' when there is an outline on the segmented", () => {
+    component.segmentedImage = 'segmented';
+    component.segmentedImageWithOutline = 'segmentedOutlined';
+
+    jest.spyOn(component, 'getLabelForSegmentedImage');
+
+    component.getLabelForSegmentedImage();
+
+    expect(component.getLabelForSegmentedImage).toReturnWith(ImageLabel.OutlinedSegmented);
+  });
+
+  test("Should show a label of 'Segmented Image' when there is not an outline on the segmented", () => {
+    component.segmentedImage = 'segmented';
+    component.segmentedImageWithOutline = '';
+
+    jest.spyOn(component, 'getLabelForSegmentedImage');
+
+    component.getLabelForSegmentedImage();
+
+    expect(component.getLabelForSegmentedImage).toReturnWith(ImageLabel.Segmented);
+  });
+
+  describe('Getting image string to display', () => {
+    beforeEach(() => {
+      (component.originalImage = 'original'), (component.segmentedImage = 'segmented');
+    });
+
+    test('Should return the original image with outline when present', () => {
+      component.originalImageWithOutline = 'outlinedOriginal';
+
+      jest.spyOn(component, 'getImageStringForOriginalImage');
+
+      component.getImageStringForOriginalImage();
+
+      expect(component.getImageStringForOriginalImage).toReturnWith('outlinedOriginal');
+    });
+
+    test('Should return the unoutlined original image when no outline is present', () => {
+      component.originalImageWithOutline = '';
+
+      jest.spyOn(component, 'getImageStringForOriginalImage');
+
+      component.getImageStringForOriginalImage();
+
+      expect(component.getImageStringForOriginalImage).toReturnWith('original');
+    });
+
+    test('Should return the segmented image with outline when present', () => {
+      component.segmentedImageWithOutline = 'outlinedSegmented';
+
+      jest.spyOn(component, 'getImageStringForSegmentedImage');
+
+      component.getImageStringForSegmentedImage();
+
+      expect(component.getImageStringForSegmentedImage).toReturnWith('outlinedSegmented');
+    });
+
+    test('Should return the unoutlined segmented image when no outline is present', () => {
+      component.segmentedImageWithOutline = '';
+
+      jest.spyOn(component, 'getImageStringForSegmentedImage');
+
+      component.getImageStringForSegmentedImage();
+
+      expect(component.getImageStringForSegmentedImage).toReturnWith('segmented');
+    });
   });
 });
