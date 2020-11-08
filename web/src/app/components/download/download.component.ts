@@ -1,7 +1,8 @@
 import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { LoadingController, ModalController, ToastController } from '@ionic/angular';
+import { LoadingController, ModalController } from '@ionic/angular';
 import { ImageService } from 'src/app/services/image/image.service';
+import { DownloadErrorMessage } from 'src/assets/constants';
 
 interface DownloadOption {
   label: string;
@@ -22,7 +23,6 @@ export class DownloadComponent implements OnInit {
   constructor(
     private imageService: ImageService,
     private loadingCtrl: LoadingController,
-    private toastCtrl: ToastController,
     private modalCtrl: ModalController,
     private formBuilder: FormBuilder
   ) {
@@ -95,20 +95,8 @@ export class DownloadComponent implements OnInit {
          */
         this.modalCtrl.dismiss(true);
       },
-      () => this.handleError()
+      () => this.imageService.handleError(DownloadErrorMessage)
     );
-  }
-
-  async handleError(): Promise<void> {
-    const toast = await this.toastCtrl.create({
-      message: 'Something went wrong trying to download your image(s). Please try again',
-      duration: 5000,
-      position: 'top',
-      color: 'warning'
-    });
-
-    toast.present();
-    this.loadingCtrl.dismiss();
   }
 
   async showLoading(): Promise<void> {

@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { LoadingController, ToastController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
@@ -8,11 +9,23 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class ImageService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private toastCtrl: ToastController, private loadingCtrl: LoadingController) {}
 
   private uploadProgress = 0;
   private downloadProgress = 0;
   private loadingElement: HTMLElement;
+
+  async handleError(message: string): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message: message,
+      duration: 5000,
+      position: 'top',
+      color: 'warning'
+    });
+
+    this.loadingCtrl.dismiss();
+    return await toast.present();
+  }
 
   getUploadProgress(): number {
     return this.uploadProgress;

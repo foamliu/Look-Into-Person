@@ -1,12 +1,11 @@
 import { HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { LoadingController, ModalController, ToastController } from '@ionic/angular';
+import { LoadingController, ModalController } from '@ionic/angular';
 import { throwError } from 'rxjs';
-import { DefaultOutlineThickness, ImageLabel, White } from 'src/assets/constants';
+import { DefaultOutlineThickness, ImageLabel, OutlineErrorMessage, UploadErrorMessage, White } from 'src/assets/constants';
 import { ImageServiceMock } from '../../../jest-mocks/image.service';
 import { ModalControllerMock } from '../../../jest-mocks/modal-controller';
-import { ToastControllerMock } from '../../../jest-mocks/toast-controller';
 import { ImageService } from '../../services/image/image.service';
 import { DownloadComponent } from '../download/download.component';
 import { LoadingControllerMock } from './../../../jest-mocks/loading-controller';
@@ -17,7 +16,6 @@ describe('HomePage', () => {
   let fixture: ComponentFixture<HomePage>;
   let imageService: ImageService;
   let loadingCtrl: LoadingController;
-  let toastCtrl: ToastController;
   let modalCtrl: ModalController;
 
   const blob = new Blob([''], { type: 'image/png' });
@@ -43,10 +41,6 @@ describe('HomePage', () => {
           useClass: LoadingControllerMock
         },
         {
-          provide: ToastController,
-          useClass: ToastControllerMock
-        },
-        {
           provide: ModalController,
           useClass: ModalControllerMock
         }
@@ -58,12 +52,10 @@ describe('HomePage', () => {
     component = fixture.componentInstance;
     imageService = TestBed.inject(ImageService);
     loadingCtrl = TestBed.inject(LoadingController);
-    toastCtrl = TestBed.inject(ToastController);
     modalCtrl = TestBed.inject(ModalController);
 
     jest.spyOn(component, 'showLoading').mockImplementation();
     jest.spyOn(component, 'dismissLoading').mockImplementation();
-    jest.spyOn(component, 'handleError').mockImplementation();
   }));
 
   test('Should upload an image and handle the response', () => {
@@ -124,7 +116,7 @@ describe('HomePage', () => {
     component.handleResponseForUploadImage(response, 'mockFileSrc');
     expect(component.originalImage).toBe('');
     expect(component.segmentedImage).toBe('');
-    expect(component.handleError).toHaveBeenCalled();
+    expect(imageService.handleError).toHaveBeenCalledWith(UploadErrorMessage);
   });
 
   test('Should call the handleError() method when upload fails', () => {
@@ -132,7 +124,7 @@ describe('HomePage', () => {
 
     component.uploadImage(event.target.result, file);
 
-    expect(component.handleError).toHaveBeenCalled();
+    expect(imageService.handleError).toHaveBeenCalledWith(UploadErrorMessage);
   });
 
   describe('requesting outlined images', () => {
@@ -209,7 +201,7 @@ describe('HomePage', () => {
       expect(component.segmentedImage).toEqual('processed1');
       expect(component.originalImageWithOutline).toEqual('');
       expect(component.segmentedImageWithOutline).toEqual('');
-      expect(component.handleError).toHaveBeenCalled();
+      expect(imageService.handleError).toHaveBeenCalledWith(OutlineErrorMessage);
     });
 
     test('Should request outlined images and handle an error and not change the images if there is an Http error', fakeAsync(() => {
@@ -223,7 +215,7 @@ describe('HomePage', () => {
       expect(component.segmentedImage).toEqual('processed1');
       expect(component.originalImageWithOutline).toEqual('');
       expect(component.segmentedImageWithOutline).toEqual('');
-      expect(component.handleError).toHaveBeenCalled();
+      expect(imageService.handleError).toHaveBeenCalledWith(OutlineErrorMessage);
     }));
   });
 

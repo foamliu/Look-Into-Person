@@ -1,5 +1,8 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { LoadingController, ToastController } from '@ionic/angular';
+import { LoadingControllerMock } from 'src/jest-mocks/loading-controller';
+import { ToastControllerMock } from 'src/jest-mocks/toast-controller';
 import { ImageService } from './image.service';
 
 describe('ImageService', () => {
@@ -14,7 +17,17 @@ describe('ImageService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [ImageService]
+      providers: [
+        ImageService,
+        {
+          provide: ToastController,
+          useClass: ToastControllerMock
+        },
+        {
+          provide: LoadingController,
+          useClass: LoadingControllerMock
+        }
+      ]
     });
     service = TestBed.inject(ImageService);
 

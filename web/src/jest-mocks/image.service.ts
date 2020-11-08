@@ -2,6 +2,7 @@ import { HttpResponse } from '@angular/common/http';
 import { of } from 'rxjs';
 
 export class ImageServiceMock {
+  handleError: (message: string) => any;
   getUploadProgress: () => number;
   setUploadProgress: (uploadProgress: number) => void;
   getDownloadProgress: () => number;
@@ -15,6 +16,7 @@ export class ImageServiceMock {
   downloadImages: (formData: any) => any;
 
   constructor() {
+    this.handleError = jest.fn(() => Promise.resolve());
     this.getUploadProgress = jest.fn(() => 50);
     this.setUploadProgress = jest.fn();
     this.getDownloadProgress = jest.fn(() => 75);

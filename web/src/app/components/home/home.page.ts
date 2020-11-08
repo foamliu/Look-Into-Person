@@ -1,8 +1,8 @@
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
-import { LoadingController, ModalController, ToastController } from '@ionic/angular';
+import { LoadingController, ModalController } from '@ionic/angular';
 import { ImageService } from 'src/app/services/image/image.service';
-import { DefaultOutlineThickness, ImageLabel, White } from '../../../assets/constants';
+import { DefaultOutlineThickness, ImageLabel, OutlineErrorMessage, UploadErrorMessage, White } from '../../../assets/constants';
 import { DownloadComponent } from '../download/download.component';
 
 @Component({
@@ -12,12 +12,7 @@ import { DownloadComponent } from '../download/download.component';
   encapsulation: ViewEncapsulation.None
 })
 export class HomePage {
-  constructor(
-    private imageService: ImageService,
-    private loadingCtrl: LoadingController,
-    private toastCtrl: ToastController,
-    private modalCtrl: ModalController
-  ) {}
+  constructor(private imageService: ImageService, private loadingCtrl: LoadingController, private modalCtrl: ModalController) {}
   @ViewChild('file') file: any;
   originalImage = '';
   segmentedImage = '';
@@ -69,7 +64,7 @@ export class HomePage {
       (event: HttpEvent<any>) => {
         this.handleResponseForUploadImage(event, src);
       },
-      () => this.handleError()
+      () => this.imageService.handleError(UploadErrorMessage)
     );
   }
 
@@ -90,24 +85,12 @@ export class HomePage {
           this.serialID = event.body.serialID;
           this.dismissLoading();
         } else {
-          this.handleError();
+          this.imageService.handleError(UploadErrorMessage);
         }
 
         break;
       }
     }
-  }
-
-  async handleError(): Promise<void> {
-    const toast = await this.toastCtrl.create({
-      message: 'Something went wrong trying to upload your image. Please try again',
-      duration: 5000,
-      position: 'top',
-      color: 'warning'
-    });
-
-    toast.present();
-    this.loadingCtrl.dismiss();
   }
 
   onProcessedImageClick(event: any): void {
@@ -192,7 +175,7 @@ export class HomePage {
       (event: HttpEvent<any>) => {
         this.handleResponseForOutlinedImages(event);
       },
-      () => this.handleError()
+      () => this.imageService.handleError(OutlineErrorMessage)
     );
   }
 
@@ -217,7 +200,7 @@ export class HomePage {
           this.segmentedImageWithOutline = event.body.segmentedOutline;
           this.dismissLoading();
         } else {
-          this.handleError();
+          this.imageService.handleError(OutlineErrorMessage);
         }
         break;
       }
