@@ -12,6 +12,7 @@ export class ImageServiceMock {
   buildUrl: (url: string) => string;
   uploadImage: (src: any, string, fileName: string) => any;
   getOutlinedImages: (segmentColor: string, outlineColor: string, outlineThickness: string) => any;
+  downloadImages: (formData: any) => any;
 
   constructor() {
     this.getUploadProgress = jest.fn(() => 50);
@@ -37,5 +38,7 @@ export class ImageServiceMock {
 
       return of(response);
     });
+
+    this.downloadImages = jest.fn(() => of('mockZipBlob'));
   }
 }

@@ -80,4 +80,12 @@ export class ImageService {
 
     return this.post(this.buildUrl('/outline'), formData, { observe: 'events', reportProgress: true });
   }
+
+  downloadImages(formData: FormData): Observable<any> {
+    return this.post(this.buildUrl('/download'), formData, {
+      responseType: 'arraybuffer',
+      observe: 'events',
+      reportProgress: true
+    });
+  }
 }

@@ -67,7 +67,10 @@
         >Outline Selected Segment</ion-button
       >
     </div>
-    <ion-button *ngIf="!!segmentedImageWithOutline && !!originalImageWithOutline" (click)="clearOutline()">Clear Outlines</ion-button>
+    <div *ngIf="!!segmentedImageWithOutline && !!originalImageWithOutline">
+      <ion-button (click)="clearOutline()">Clear Outlines</ion-button>
+      <ion-button (click)="download()">Download Images</ion-button>
+    </div>
   </ion-grid>
 </ion-content>
 

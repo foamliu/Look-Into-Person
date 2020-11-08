@@ -1,12 +1,14 @@
 import { HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { LoadingController, ToastController } from '@ionic/angular';
+import { LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { throwError } from 'rxjs';
-import { ImageLabel } from 'src/assets/constants';
-import { ToastControllerMock } from 'src/jest-mocks/toast-controller';
+import { DefaultOutlineThickness, ImageLabel, White } from 'src/assets/constants';
 import { ImageServiceMock } from '../../../jest-mocks/image.service';
+import { ModalControllerMock } from '../../../jest-mocks/modal-controller';
+import { ToastControllerMock } from '../../../jest-mocks/toast-controller';
 import { ImageService } from '../../services/image/image.service';
+import { DownloadComponent } from '../download/download.component';
 import { LoadingControllerMock } from './../../../jest-mocks/loading-controller';
 import { HomePage } from './home.page';
 
@@ -16,6 +18,7 @@ describe('HomePage', () => {
   let imageService: ImageService;
   let loadingCtrl: LoadingController;
   let toastCtrl: ToastController;
+  let modalCtrl: ModalController;
 
   const blob = new Blob([''], { type: 'image/png' });
   blob['name'] = 'mockFileName';
@@ -42,6 +45,10 @@ describe('HomePage', () => {
         {
           provide: ToastController,
           useClass: ToastControllerMock
+        },
+        {
+          provide: ModalController,
+          useClass: ModalControllerMock
         }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -52,6 +59,7 @@ describe('HomePage', () => {
     imageService = TestBed.inject(ImageService);
     loadingCtrl = TestBed.inject(LoadingController);
     toastCtrl = TestBed.inject(ToastController);
+    modalCtrl = TestBed.inject(ModalController);
 
     jest.spyOn(component, 'showLoading').mockImplementation();
     jest.spyOn(component, 'dismissLoading').mockImplementation();
@@ -308,4 +316,32 @@ describe('HomePage', () => {
       expect(component.getImageStringForSegmentedImage).toReturnWith('segmented');
     });
   });
+
+  test('Should open a download modal and then reset all class variables after download', fakeAsync(() => {
+    component.outlineColor = 'mockOutlineColor';
+    component.outlineThickness = '1';
+    component.segnetSectionColor = 'mockSegnetSectionColor';
+    component.serialID = 'Trix';
+    component.originalImage = 'original';
+    component.segmentedImage = 'segment';
+    component.originalImageWithOutline = 'originalOutline';
+    component.segmentedImageWithOutline = 'segmentOutline';
+
+    component.download();
+    tick();
+
+    expect(modalCtrl.create).toHaveBeenCalledWith({
+      component: DownloadComponent,
+      componentProps: { serialID: 'Trix' }
+    });
+
+    expect(component.outlineColor).toEqual(White);
+    expect(component.outlineThickness).toEqual(DefaultOutlineThickness);
+    expect(component.segnetSectionColor).toBeUndefined();
+    expect(component.serialID).toBeUndefined();
+    expect(component.originalImage).toEqual('');
+    expect(component.segmentedImage).toEqual('');
+    expect(component.originalImageWithOutline).toEqual('');
+    expect(component.segmentedImageWithOutline).toEqual('');
+  }));
 });

@@ -1,0 +1,17 @@
+<ion-header class="header">Select Files to Download:</ion-header>
+<form [formGroup]="form" (ngSubmit)="download()">
+  <ion-list formArrayName="options">
+    <ion-item *ngFor="let option of formArr.controls; let i = index" [formGroupName]="i">
+      <ion-label>{{ downloadOptions[i].label }}</ion-label>
+      <ion-checkbox
+        [formControlName]="downloadOptions[i].name"
+        [value]="option.value"
+        (ionChange)="onCheckboxChange($event)"
+      ></ion-checkbox>
+    </ion-item>
+  </ion-list>
+</form>
+<ion-footer class="footer">
+  <ion-button (click)="close()">Cancel</ion-button>
+  <ion-button type="submit" [disabled]="numberChecked === 0">Submit</ion-button>
+</ion-footer>

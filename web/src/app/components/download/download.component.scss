@@ -1,0 +1,18 @@
+download {
+  --header-background: #3e3e3e;
+  --header-height: 50rem;
+
+  .header {
+    color: #fff;
+    font-size: 20rem;
+  }
+
+  .header,
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    background: var(--header-background);
+    height: var(--header-height);
+  }
+}

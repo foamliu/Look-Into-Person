@@ -4,3 +4,6 @@ export enum ImageLabel {
   Segmented = 'Segmented Image',
   OutlinedSegmented = 'Outlined Segmented Image'
 }
+
+export const White = '#ffffff';
+export const DefaultOutlineThickness = '0';

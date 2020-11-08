@@ -114,4 +114,17 @@ describe('ImageService', () => {
 
     expect(service.post).toHaveBeenCalledWith('/outline', expectedForm, { observe: 'events', reportProgress: true });
   });
+
+  test('Should make a request to download images based on a specified form', () => {
+    const formData = new FormData();
+    jest.spyOn(service, 'post').mockImplementation();
+
+    service.downloadImages(formData);
+
+    expect(service.post).toHaveBeenCalledWith('/download', formData, {
+      responseType: 'arraybuffer',
+      observe: 'events',
+      reportProgress: true
+    });
+  });
 });

@@ -1,8 +1,9 @@
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
-import { LoadingController, ToastController } from '@ionic/angular';
+import { LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { ImageService } from 'src/app/services/image/image.service';
-import { ImageLabel } from '../../../assets/constants';
+import { DefaultOutlineThickness, ImageLabel, White } from '../../../assets/constants';
+import { DownloadComponent } from '../download/download.component';
 
 @Component({
   selector: 'home',
@@ -11,14 +12,19 @@ import { ImageLabel } from '../../../assets/constants';
   encapsulation: ViewEncapsulation.None
 })
 export class HomePage {
-  constructor(private imageService: ImageService, private loadingCtrl: LoadingController, private toastCtrl: ToastController) {}
+  constructor(
+    private imageService: ImageService,
+    private loadingCtrl: LoadingController,
+    private toastCtrl: ToastController,
+    private modalCtrl: ModalController
+  ) {}
   @ViewChild('file') file: any;
   originalImage = '';
   segmentedImage = '';
   originalImageWithOutline = '';
   segmentedImageWithOutline = '';
-  outlineColor = '#ffffff';
-  outlineThickness: '0' | '1' | '2' = '0';
+  outlineColor = White;
+  outlineThickness: '0' | '1' | '2' = DefaultOutlineThickness;
   segnetSectionColor: string;
   serialID: string;
 
@@ -216,5 +222,27 @@ export class HomePage {
         break;
       }
     }
+  }
+
+  async download(): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: DownloadComponent,
+      componentProps: { serialID: this.serialID }
+    });
+
+    modal.onDidDismiss().then((response) => {
+      if (response && response.data) {
+        this.outlineColor = White;
+        this.outlineThickness = DefaultOutlineThickness;
+        this.segnetSectionColor = undefined;
+        this.serialID = undefined;
+        this.originalImage = '';
+        this.segmentedImage = '';
+        this.originalImageWithOutline = '';
+        this.segmentedImageWithOutline = '';
+      }
+    });
+
+    return await modal.present();
   }
 }
