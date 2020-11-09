@@ -1,14 +1,15 @@
 import random
 import string
 
-from flask import send_from_directory, send_file, request, json
+from os.path import split
+from flask import send_from_directory, send_file, request, json, after_this_request
 from app import app
 from app.process.segnet.segment import img_process
-from app.tools.dirs import save_upload, save_processed, get_original, get_segmented
+from app.tools.dirs import save_upload, save_processed, get_original, get_segmented, save_processed_outlined, \
+    save_upload_outlined, create_zip, cleanup
 from app.process.outline import *
 from app.process.base64conversion import *
-from PIL import Image  # Delete once purged of pillow
-import cv2.cv2 as cv2
+from PIL import Image
 
 
 @app.route('/')
@@ -31,8 +32,6 @@ def upload_file():
     pro_img = save_processed(img_data, file_info[1])
 
     processed_base64 = to_base64(pro_img)
-    temp = from_base64(processed_base64)
-    cv2.imwrite('temp.png', temp)
     return json.jsonify(segmentedImage=get_html(processed_base64), serialID=serial_id)
 
 
@@ -52,17 +51,34 @@ def select_segment():
     orig_image = paste_outline(orig_image, img_outline, outline_color, outline_thickness_int)
     seg_img = paste_outline(seg_img, img_outline, outline_color, outline_thickness_int)
 
-    orig_image.save(orig_image_path)
-    seg_img.save(seg_image_path)
+    orig_f = split(orig_image_path)[1]
+    outline_orig_img_path = save_upload_outlined(orig_f, orig_image)
 
-    seg_img = get_html(to_base64(seg_image_path))
-    orig_image = get_html(to_base64(orig_image_path))
+    seg_f = split(seg_image_path)[1]
+    outline_seg_img_path = save_processed_outlined(seg_f, seg_img)
+
+    seg_img = get_html(to_base64(outline_seg_img_path))
+    orig_image = get_html(to_base64(outline_orig_img_path))
 
     return json.jsonify(originalOutline=orig_image, segmentedOutline=seg_img)
 
 
-# @app.route('/download_image', methods=['POST'])
-# def download_image():
+@app.route('/download', methods=['GET', 'POST'])
+def download():
+    serial_id = request.form['serialID']
+    orig = request.form['orig']
+    orig_outline = request.form['origOutline']
+    seg = request.form['seg']
+    seg_outline = request.form['segOutline']
+
+    zip_path = create_zip(serial_id, [orig, orig_outline, seg, seg_outline])
+
+    @after_this_request
+    def removal(response):
+        cleanup(serial_id)
+        return response
+
+    return send_file(zip_path, attachment_filename=serial_id + '.zip')
 
 
 @app.route('/<path:path>')
