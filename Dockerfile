@@ -28,7 +28,7 @@ RUN git clone https://github.com/sloanlipman/Look-Into-Person.git ./app/process/
 
 # Get the model
 RUN mkdir ./app/process/segnet/models
-RUN wget https://github.com/foamliu/Look-Into-Person/releases/download/v1.0/model.11-0.8409.hdf5 && mv model.11-0.8409.hdf5 ./app/process/segnet/models/
+RUN wget https://github.com/sloanlipman/Look-Into-Person/releases/download/v1.1/model.11-0.8409.hdf5 && mv model.11-0.8409.hdf5 ./app/process/segnet/models/
 
 # Build the Angular project
 WORKDIR /usr/src/app/automatic-apparel-outliner/web
