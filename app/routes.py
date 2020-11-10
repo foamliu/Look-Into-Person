@@ -19,7 +19,7 @@ def index():
 
 
 # delete img after processing
-@app.route('/segment', methods=['GET', 'POST'])
+@app.route('/segment', methods=['POST'])
 def upload_file():
     b64_string = request.form['image']
 
@@ -35,7 +35,7 @@ def upload_file():
     return json.jsonify(segmentedImage=get_html(processed_base64), serialID=serial_id)
 
 
-@app.route('/outline', methods=['GET', 'POST'])
+@app.route('/outline', methods=['POST'])
 def select_segment():
     seg_rgb = request.form['segmentColor']
     outline_color = request.form['outlineColor']
@@ -63,7 +63,7 @@ def select_segment():
     return json.jsonify(originalOutline=orig_image, segmentedOutline=seg_img)
 
 
-@app.route('/download', methods=['GET', 'POST'])
+@app.route('/download', methods=['POST'])
 def download():
     serial_id = request.form['serialID']
     orig = request.form['orig']
