@@ -27,6 +27,17 @@ export class ImageService {
     return await toast.present();
   }
 
+  async showSuccessfulDownload(): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message: 'Click the button to upload another image!',
+      duration: 7500,
+      position: 'top',
+      color: 'success'
+    });
+
+    return await toast.present();
+  }
+
   getUploadProgress(): number {
     return this.uploadProgress;
   }

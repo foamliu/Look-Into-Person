@@ -223,6 +223,8 @@ export class HomePage {
         this.segmentedImage = '';
         this.originalImageWithOutline = '';
         this.segmentedImageWithOutline = '';
+        this.dismissLoading();
+        this.imageService.showSuccessfulDownload();
       }
     });
 

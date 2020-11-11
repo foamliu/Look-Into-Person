@@ -1,3 +1,4 @@
+import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { LoadingController, ModalController } from '@ionic/angular';
@@ -87,14 +88,7 @@ export class DownloadComponent implements OnInit {
 
     formData.append('serialID', this.serialID);
     this.imageService.downloadImages(formData).subscribe(
-      () => {
-        /* TODOs
-         * Update download progress via events
-         * Prompt the user to download the zip when it comes back
-         * Only then should we dismiss the modal!
-         */
-        this.modalCtrl.dismiss(true);
-      },
+      (event: HttpEvent<any>) => this.handleDownloadResponse(event),
       () => this.imageService.handleError(DownloadErrorMessage)
     );
   }
@@ -106,5 +100,30 @@ export class DownloadComponent implements OnInit {
 
     await loading.present();
     this.imageService.setLoadingElement(document.querySelector('div.loading-wrapper div.loading-content'));
+  }
+
+  handleDownloadResponse(event: HttpEvent<any>) {
+    switch (event.type) {
+      case HttpEventType.DownloadProgress: {
+        this.imageService.setDownloadProgress(Math.round((event.loaded / event.total) * 100));
+
+        break;
+      }
+      case HttpEventType.Response: {
+        if (event && event.body) {
+          const zip = new Blob([event.body], {
+            type: 'application/zip'
+          });
+
+          const url = window.URL.createObjectURL(zip);
+          window.open(url);
+
+          this.modalCtrl.dismiss(true);
+        } else {
+          this.imageService.handleError(DownloadErrorMessage);
+        }
+        break;
+      }
+    }
   }
 }
