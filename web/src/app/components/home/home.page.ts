@@ -214,20 +214,24 @@ export class HomePage {
     });
 
     modal.onDidDismiss().then((response) => {
-      if (response && response.data) {
-        this.outlineColor = White;
-        this.outlineThickness = DefaultOutlineThickness;
-        this.segnetSectionColor = undefined;
-        this.serialID = undefined;
-        this.originalImage = '';
-        this.segmentedImage = '';
-        this.originalImageWithOutline = '';
-        this.segmentedImageWithOutline = '';
-        this.dismissLoading();
-        this.imageService.showSuccessfulDownload();
-      }
+      this.handleDismissForDownloadModal(response);
     });
 
     return await modal.present();
+  }
+
+  handleDismissForDownloadModal(response: any) {
+    if (response && response.data) {
+      this.outlineColor = White;
+      this.outlineThickness = DefaultOutlineThickness;
+      this.segnetSectionColor = undefined;
+      this.serialID = undefined;
+      this.originalImage = '';
+      this.segmentedImage = '';
+      this.originalImageWithOutline = '';
+      this.segmentedImageWithOutline = '';
+      this.imageService.showSuccessfulDownload();
+      this.dismissLoading();
+    }
   }
 }

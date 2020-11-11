@@ -18,7 +18,7 @@ interface DownloadOption {
   encapsulation: ViewEncapsulation.None
 })
 export class DownloadComponent implements OnInit {
-  @Input() private serialID: string;
+  @Input() serialID: string;
   numberChecked = 0;
 
   constructor(
@@ -55,6 +55,10 @@ export class DownloadComponent implements OnInit {
   formArray: FormArray = this.formBuilder.array([]);
 
   ngOnInit() {
+    this.initializeForm();
+  }
+
+  initializeForm(): void {
     this.downloadOptions.forEach((option: DownloadOption) => {
       const formGroup = this.formBuilder.group({});
       formGroup.addControl(option.name, this.formBuilder.control(false));
@@ -102,11 +106,10 @@ export class DownloadComponent implements OnInit {
     this.imageService.setLoadingElement(document.querySelector('div.loading-wrapper div.loading-content'));
   }
 
-  handleDownloadResponse(event: HttpEvent<any>) {
+  handleDownloadResponse(event: HttpEvent<any>): void {
     switch (event.type) {
       case HttpEventType.DownloadProgress: {
         this.imageService.setDownloadProgress(Math.round((event.loaded / event.total) * 100));
-
         break;
       }
       case HttpEventType.Response: {
@@ -115,9 +118,7 @@ export class DownloadComponent implements OnInit {
             type: 'application/zip'
           });
 
-          const url = window.URL.createObjectURL(zip);
-          window.open(url);
-
+          this.promptForDownload(zip);
           this.modalCtrl.dismiss(true);
         } else {
           this.imageService.handleError(DownloadErrorMessage);
@@ -125,5 +126,10 @@ export class DownloadComponent implements OnInit {
         break;
       }
     }
+  }
+
+  promptForDownload(zip: Blob): void {
+    const url = window.URL.createObjectURL(zip);
+    window.open(url);
   }
 }

@@ -58,6 +58,53 @@ describe('HomePage', () => {
     jest.spyOn(component, 'dismissLoading').mockImplementation();
   }));
 
+  test('Should reset upload/download progress when dismissing loading', () => {
+    jest.spyOn(component, 'dismissLoading').mockRestore();
+
+    component.dismissLoading();
+
+    expect(loadingCtrl.dismiss).toHaveBeenCalled();
+    expect(imageService.resetProgress).toHaveBeenCalled();
+  });
+
+  test('Should change the segnet section color when clicking a segmented image', () => {
+    jest.spyOn(component, 'getPixelData').mockReturnValue([85, 0, 0, 255]);
+    jest.spyOn(component, 'convertFromRGBAToHex').mockImplementation();
+    component.segmentedImageWithOutline = '';
+
+    component.onProcessedImageClick('mockClickEvent');
+
+    expect(component.getPixelData).toHaveBeenCalledWith('mockClickEvent');
+    expect(component.convertFromRGBAToHex).toHaveBeenCalledWith([85, 0, 0, 255]);
+  });
+
+  test('Should do nothing when clicking on a segmented image that is outlined', () => {
+    jest.spyOn(component, 'getPixelData').mockImplementation();
+    jest.spyOn(component, 'convertFromRGBAToHex').mockImplementation();
+    component.segmentedImageWithOutline = 'segWithOutline';
+
+    component.onProcessedImageClick('mockClickEvent');
+
+    expect(component.getPixelData).not.toHaveBeenCalled();
+    expect(component.convertFromRGBAToHex).not.toHaveBeenCalled();
+  });
+
+  test('Should convert an RGBA pixel to a hex representation for 1 digit hex strings', () => {
+    jest.spyOn(component, 'convertFromRGBAToHex');
+
+    component.convertFromRGBAToHex([10, 5, 15, 255]);
+
+    expect(component.convertFromRGBAToHex).toReturnWith('#0a050f');
+  });
+
+  test('Should convert an RGBA pixel to a hex representation for 2 digit hex strings', () => {
+    jest.spyOn(component, 'convertFromRGBAToHex');
+
+    component.convertFromRGBAToHex([17, 153, 255, 255]);
+
+    expect(component.convertFromRGBAToHex).toReturnWith('#1199ff');
+  });
+
   test('Should upload an image and handle the response', () => {
     jest.spyOn(component, 'handleResponseForUploadImage');
 
@@ -149,6 +196,16 @@ describe('HomePage', () => {
         })
       );
     }));
+
+    test('Should clear the outlined images', () => {
+      component.segmentedImageWithOutline = 'segOutline';
+      component.originalImageWithOutline = 'origOutline';
+
+      component.clearOutline();
+
+      expect(component.segmentedImageWithOutline).toEqual('');
+      expect(component.originalImageWithOutline).toEqual('');
+    });
 
     test('Should handle an upload event when uploading an image', () => {
       jest.spyOn(component, 'handleUploadEvent').mockImplementation();
@@ -309,15 +366,9 @@ describe('HomePage', () => {
     });
   });
 
-  test('Should open a download modal and then reset all class variables after download', fakeAsync(() => {
-    component.outlineColor = 'mockOutlineColor';
-    component.outlineThickness = '1';
-    component.segnetSectionColor = 'mockSegnetSectionColor';
+  test('Should open a download modal and handle the response', fakeAsync(() => {
+    jest.spyOn(component, 'handleDismissForDownloadModal').mockImplementation();
     component.serialID = 'Trix';
-    component.originalImage = 'original';
-    component.segmentedImage = 'segment';
-    component.originalImageWithOutline = 'originalOutline';
-    component.segmentedImageWithOutline = 'segmentOutline';
 
     component.download();
     tick();
@@ -327,6 +378,21 @@ describe('HomePage', () => {
       componentProps: { serialID: 'Trix' }
     });
 
+    expect(component.handleDismissForDownloadModal).toHaveBeenCalledWith({ data: 'mockData' });
+  }));
+
+  test('Should handle a successful download by resetting the class variables', () => {
+    component.outlineColor = 'mockOutlineColor';
+    component.outlineThickness = '1';
+    component.segnetSectionColor = 'mockSegnetSectionColor';
+    component.serialID = 'Trix';
+    component.originalImage = 'original';
+    component.segmentedImage = 'segment';
+    component.originalImageWithOutline = 'originalOutline';
+    component.segmentedImageWithOutline = 'segmentOutline';
+
+    component.handleDismissForDownloadModal({ data: true });
+
     expect(component.outlineColor).toEqual(White);
     expect(component.outlineThickness).toEqual(DefaultOutlineThickness);
     expect(component.segnetSectionColor).toBeUndefined();
@@ -335,5 +401,31 @@ describe('HomePage', () => {
     expect(component.segmentedImage).toEqual('');
     expect(component.originalImageWithOutline).toEqual('');
     expect(component.segmentedImageWithOutline).toEqual('');
-  }));
+    expect(imageService.showSuccessfulDownload).toHaveBeenCalled();
+    expect(component.dismissLoading).toHaveBeenCalled();
+  });
+
+  test('Should not reset class variables if the download modal is dismissed without success', () => {
+    component.outlineColor = 'mockOutlineColor';
+    component.outlineThickness = '1';
+    component.segnetSectionColor = 'mockSegnetSectionColor';
+    component.serialID = 'Trix';
+    component.originalImage = 'original';
+    component.segmentedImage = 'segment';
+    component.originalImageWithOutline = 'originalOutline';
+    component.segmentedImageWithOutline = 'segmentOutline';
+
+    component.handleDismissForDownloadModal({ data: undefined });
+
+    expect(component.outlineColor).toEqual('mockOutlineColor');
+    expect(component.outlineThickness).toEqual('1');
+    expect(component.segnetSectionColor).toEqual('mockSegnetSectionColor');
+    expect(component.serialID).toEqual('Trix');
+    expect(component.originalImage).toEqual('original');
+    expect(component.segmentedImage).toEqual('segment');
+    expect(component.originalImageWithOutline).toEqual('originalOutline');
+    expect(component.segmentedImageWithOutline).toEqual('segmentOutline');
+    expect(imageService.showSuccessfulDownload).not.toHaveBeenCalled();
+    expect(component.dismissLoading).not.toHaveBeenCalled();
+  });
 });
