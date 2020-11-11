@@ -9,6 +9,7 @@ module.exports = {
   collectCoverage: true,
   coverageReporters: ['html'],
   coverageDirectory: 'coverage/',
+  coveragePathIgnorePatterns: ['<rootDir>/src/environments', '<rootDir>/src/assets', 'jest-mocks'],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}, {
     prefix: '<rootDir>/'
   })
