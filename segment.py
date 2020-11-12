@@ -1,5 +1,5 @@
 import os
-import cv2.cv2 as cv2
+import cv2 as cv2
 from app.process.segnet.config import num_classes, img_rows, img_cols
 from app.process.segnet.data_generator import random_choice, safe_crop, to_bgr
 from app.process.segnet.model import build_model
