@@ -54,13 +54,13 @@ export class HomePage {
     const reader = new FileReader();
     await this.showLoading();
 
-    reader.addEventListener('load', (event: any) => this.uploadImage(event.target.result, file));
+    reader.addEventListener('load', (event: any) => this.uploadImage(event.target.result, file.name));
 
     reader.readAsDataURL(file);
   }
 
-  uploadImage(src: string, file: File) {
-    this.imageService.uploadImage(src, file.name).subscribe(
+  uploadImage(src: string, fileName: string) {
+    this.imageService.uploadImage(src, fileName).subscribe(
       (event: HttpEvent<any>) => {
         this.handleResponseForUploadImage(event, src);
       },

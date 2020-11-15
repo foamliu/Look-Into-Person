@@ -108,7 +108,7 @@ describe('HomePage', () => {
   test('Should upload an image and handle the response', () => {
     jest.spyOn(component, 'handleResponseForUploadImage');
 
-    component.uploadImage(event.target.result, file);
+    component.uploadImage(event.target.result, file.name);
     expect(component.handleResponseForUploadImage).toHaveBeenCalledWith(
       new HttpResponse({
         body: { segmentedImage: 'b64String' }
@@ -169,7 +169,7 @@ describe('HomePage', () => {
   test('Should call the handleError() method when upload fails', () => {
     jest.spyOn(imageService, 'uploadImage').mockReturnValue(throwError('error'));
 
-    component.uploadImage(event.target.result, file);
+    component.uploadImage(event.target.result, file.name);
 
     expect(imageService.handleError).toHaveBeenCalledWith(UploadErrorMessage);
   });
