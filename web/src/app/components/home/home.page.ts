@@ -24,6 +24,10 @@ export class HomePage {
   segnetSectionColor: string;
   serialID: string;
 
+  openHelpPage() {
+    window.open('/help');
+  }
+
   addFiles() {
     this.file.nativeElement.click();
   }
