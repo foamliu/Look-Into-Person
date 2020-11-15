@@ -3,6 +3,7 @@ import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { LoadingController, ModalController } from '@ionic/angular';
 import { ImageService } from 'src/app/services/image/image.service';
 import { DefaultOutlineThickness, ImageLabel, OutlineErrorMessage, UploadErrorMessage, White } from '../../../assets/constants';
+import { Dress } from '../../../assets/dress';
 import { DownloadComponent } from '../download/download.component';
 
 @Component({
@@ -25,6 +26,11 @@ export class HomePage {
 
   addFiles() {
     this.file.nativeElement.click();
+  }
+
+  async uploadTestFile() {
+    await this.showLoading();
+    this.uploadImage(Dress, 'dress.png');
   }
 
   async showLoading(): Promise<void> {

@@ -4,6 +4,7 @@ import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core
 import { LoadingController, ModalController } from '@ionic/angular';
 import { throwError } from 'rxjs';
 import { DefaultOutlineThickness, ImageLabel, OutlineErrorMessage, UploadErrorMessage, White } from 'src/assets/constants';
+import { Dress } from '../../../assets/dress';
 import { ImageServiceMock } from '../../../jest-mocks/image.service';
 import { ModalControllerMock } from '../../../jest-mocks/modal-controller';
 import { ImageService } from '../../services/image/image.service';
@@ -56,6 +57,16 @@ describe('HomePage', () => {
 
     jest.spyOn(component, 'showLoading').mockImplementation();
     jest.spyOn(component, 'dismissLoading').mockImplementation();
+  }));
+
+  test('Should simulate the upload functionality with a static image', fakeAsync(() => {
+    jest.spyOn(component, 'uploadImage').mockImplementation();
+
+    component.uploadTestFile();
+    tick();
+
+    expect(component.showLoading).toHaveBeenCalled();
+    expect(component.uploadImage).toHaveBeenCalledWith(Dress, 'dress.png');
   }));
 
   test('Should reset upload/download progress when dismissing loading', () => {

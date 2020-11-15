@@ -14,6 +14,7 @@
   <ion-grid id="container">
     <ion-row>
       <ion-button id="upload" (click)="addFiles()">Select a file</ion-button>
+      <ion-button id="hidden-upload" (click)="uploadTestFile()"></ion-button>
     </ion-row>
     <ion-row *ngIf="!!originalImage">
       <ion-col>{{ getLabelForOriginalImage() }}</ion-col>
