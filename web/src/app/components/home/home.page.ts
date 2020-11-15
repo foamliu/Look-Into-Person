@@ -56,13 +56,15 @@ export class HomePage {
   }
 
   async onFilesAdded() {
-    const file: File = this.file.nativeElement.files[0];
-    const reader = new FileReader();
-    await this.showLoading();
+    if (this.file?.nativeElement?.files?.length) {
+      const file: File = this.file.nativeElement.files[0];
+      const reader = new FileReader();
+      await this.showLoading();
 
-    reader.addEventListener('load', (event: any) => this.uploadImage(event.target.result, file.name));
+      reader.addEventListener('load', (event: any) => this.uploadImage(event.target.result, file.name));
 
-    reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
+    }
   }
 
   uploadImage(src: string, fileName: string) {
