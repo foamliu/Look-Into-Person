@@ -2,6 +2,8 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 import time
 
+from selenium.webdriver import ActionChains
+
 driver = webdriver.Safari()
 driver.get("http://127.0.0.1:5000/home")
 
@@ -24,6 +26,13 @@ Verify that the following buttons exist in the app:
 '''
 # Integration Testing - TC03 - START
 
+# Test for 'Help Documents' button
+try:
+    driver.find_element_by_xpath('//*[@id="help-button"]')
+    print('"Help Documents" button on main page found.')
+except NoSuchElementException:
+    print('"Help Documents" button on main page not found.')
+
 # Test for 'Select A File' button
 try:
     driver.find_element_by_xpath('//*[@id="upload"]')
@@ -40,6 +49,13 @@ try:
     print('"Outline Selected Segment" button found.')
 except NoSuchElementException:
     print('"Outline Selected Segment" button not found.')
+
+processedImage = driver.find_element_by_xpath('//*[@id="processedImage"]')
+action = ActionChains(driver)
+action.move_to_element(processedImage).move_by_offset(5, 5).click().perform()  # outline color gets selected
+time.sleep(5)
+driver.find_element_by_xpath('//*[@id="container"]/div/ion-button').click()
+time.sleep(5)
 
 # Test for 'Clear Outlines' button
 try:
