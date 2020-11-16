@@ -30,9 +30,11 @@ def upload_file():
     file_info = save_upload(image, filename)
     img_data = img_process(file_info[0])
     pro_img = save_processed(img_data, file_info[1])
+    imgOriginal = get_original(serial_id)
 
     processed_base64 = to_base64(pro_img)
-    return json.jsonify(segmentedImage=get_html(processed_base64), serialID=serial_id)
+    original_base64 = to_base64(imgOriginal)
+    return json.jsonify(segmentedImage=get_html(processed_base64), serialID=serial_id, originalImage=get_html(original_base64))
 
 
 @app.route('/outline', methods=['POST'])
