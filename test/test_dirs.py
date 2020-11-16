@@ -3,10 +3,12 @@ from os.path import join, dirname, realpath, split
 import cv2.cv2 as cv2
 import pytest
 import os
+from PIL import Image
 
 base_path = split(dirname(realpath(__file__)))
 UPLOAD_FOLDER = join(base_path[0], 'app/img/uploads')
 PROCESSED_FOLDER = join(base_path[0], 'app/img/processed')
+ZIPPED_FOLDER = join(base_path[0], 'app/img/zipped')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp'}
 
 TEST_FOLDER = join(base_path[0], 'test', 'test_dirs_support')
@@ -25,9 +27,16 @@ def setup_test_image():
 @pytest.fixture(scope='session', autouse=True)
 def remove_test_images():
     yield 'teardown'
-    os.remove(UPLOAD_FOLDER + "/1234.png")
-    os.remove(PROCESSED_FOLDER + "/1234.png")
-
+    if "1234.png" in os.listdir(UPLOAD_FOLDER):
+        os.remove(UPLOAD_FOLDER + "/1234.png")
+    if "1234.png" in os.listdir(PROCESSED_FOLDER):
+        os.remove(PROCESSED_FOLDER + "/1234.png")
+    if "1234.png" in os.listdir(join(PROCESSED_FOLDER, "outlined")):
+        os.remove(join(PROCESSED_FOLDER, "outlined" , "1234.png"))
+    if "1234.png" in os.listdir(join(UPLOAD_FOLDER, "outlined" )):
+        os.remove(join(UPLOAD_FOLDER, "outlined" , "1234.png"))
+    if "1234.zip" in os.listdir(ZIPPED_FOLDER):
+        os.remove(ZIPPED_FOLDER + "/1234.zip")
 
 def test_allowed_file():
     for f in ALLOWED_EXTENSIONS:
@@ -52,8 +61,47 @@ def test_get_original(setup_test_image):
     img = get_original('1234')
     assert img != 'original image not found'
 
-# def test_clear_uploads():
-#     # print(os.listdir(UPLOAD_FOLDER))
-#     clear_uploads()
-#     assert len(os.listdir(UPLOAD_FOLDER)) == 0  # upload folder is empty
-#     assert len(os.listdir(PROCESSED_FOLDER)) == 0  # processed folder is empty
+def test_cleanup():
+    image = cv2.imread(TEST_FOLDER + "/" + ORIGINAL_TEST_IMAGE_FILE)
+    save_upload(image, "1234.png")
+    cleanup('1234')
+    files = os.listdir(UPLOAD_FOLDER)
+    isPresent = "1234.png" in files
+    assert not isPresent
+
+def test_save_processed_outlined():
+    image = Image.open(TEST_FOLDER + "/" + ORIGINAL_TEST_IMAGE_FILE)
+    save_processed_outlined("1234.png", image)
+    files = os.listdir(join(base_path[0], 'app/img/processed/outlined'))
+    isPresent = "1234.png" in files
+    print(files)
+    assert isPresent
+
+def test_save_upload_outlined():
+    image = Image.open(TEST_FOLDER + "/" + ORIGINAL_TEST_IMAGE_FILE)
+    save_upload_outlined("1234.png", image)
+    files = os.listdir(join(base_path[0], 'app/img/uploads/outlined'))
+    isPresent = "1234.png" in files
+    print(files)
+    assert isPresent
+
+
+def test_create_zip():
+    #create_zip(serial_id, file_list)
+    imgOriginal = cv2.imread(TEST_FOLDER + "/" + ORIGINAL_TEST_IMAGE_FILE)
+    save_upload(imgOriginal, "1234.png")
+
+    imgSegmented = cv2.imread(TEST_FOLDER + "/" + ORIGINAL_TEST_IMAGE_FILE)
+    save_processed(imgSegmented, "1234.png")
+
+    imgOriginalOutlined = Image.open(TEST_FOLDER + "/" + ORIGINAL_TEST_IMAGE_FILE)
+    save_upload_outlined("1234.png", imgOriginalOutlined)
+
+    imgSegmentedOutlined = Image.open(TEST_FOLDER + "/" + ORIGINAL_TEST_IMAGE_FILE)
+    save_processed_outlined("1234.png", imgSegmentedOutlined)
+
+    fileList = [imgOriginal, imgSegmented, imgOriginalOutlined, imgSegmentedOutlined]
+    create_zip('1234', fileList)
+
+    assert "1234.zip" in os.listdir(ZIPPED_FOLDER)
+

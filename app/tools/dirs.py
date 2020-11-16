@@ -137,7 +137,6 @@ def create_zip(serial_id, file_list):
     return ZIPPED_FOLDER + sep + serial_id + '.zip'
 
 
-# Need Test
 def cleanup(serial_id):
     for root, dirs, files in walk(IMG_FOLDER):
         for name in files:
