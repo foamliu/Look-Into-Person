@@ -123,8 +123,7 @@ describe('HomePage', () => {
     expect(component.handleResponseForUploadImage).toHaveBeenCalledWith(
       new HttpResponse({
         body: { segmentedImage: 'b64String' }
-      }),
-      'mockFileSrc'
+      })
     );
   });
 
@@ -137,7 +136,7 @@ describe('HomePage', () => {
       total: 100
     };
 
-    component.handleResponseForUploadImage(httpEvent, 'mockSrc');
+    component.handleResponseForUploadImage(httpEvent);
     expect(component.handleUploadEvent).toHaveBeenCalledWith(25, 100);
   });
 
@@ -150,17 +149,17 @@ describe('HomePage', () => {
       total: 100
     };
 
-    component.handleResponseForUploadImage(httpEvent, 'mockSrc');
+    component.handleResponseForUploadImage(httpEvent);
     expect(component.handleDownloadEvent).toHaveBeenCalledWith(87, 100);
   });
 
   test('Should handle an HttpResponse when uploading an image', () => {
     const response = new HttpResponse({
-      body: { segmentedImage: 'b64String', serialID: 'FrostedFlakes' }
+      body: { segmentedImage: 'b64String', serialID: 'FrostedFlakes', originalImage: 'resizedOriginal' }
     });
 
-    component.handleResponseForUploadImage(response, 'mockFileSrc');
-    expect(component.originalImage).toEqual('mockFileSrc');
+    component.handleResponseForUploadImage(response);
+    expect(component.originalImage).toEqual('resizedOriginal');
     expect(component.segmentedImage).toEqual('b64String');
     expect(component.serialID).toEqual('FrostedFlakes');
     expect(component.dismissLoading).toHaveBeenCalled();
@@ -171,7 +170,7 @@ describe('HomePage', () => {
       body: { finalImage: 'b64String' }
     });
 
-    component.handleResponseForUploadImage(response, 'mockFileSrc');
+    component.handleResponseForUploadImage(response);
     expect(component.originalImage).toBe('');
     expect(component.segmentedImage).toBe('');
     expect(imageService.handleError).toHaveBeenCalledWith(UploadErrorMessage);

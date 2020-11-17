@@ -74,13 +74,13 @@ export class HomePage {
   uploadImage(src: string, fileName: string) {
     this.imageService.uploadImage(src, fileName).subscribe(
       (event: HttpEvent<any>) => {
-        this.handleResponseForUploadImage(event, src);
+        this.handleResponseForUploadImage(event);
       },
       () => this.imageService.handleError(UploadErrorMessage)
     );
   }
 
-  handleResponseForUploadImage(event: HttpEvent<any>, src: string) {
+  handleResponseForUploadImage(event: HttpEvent<any>) {
     switch (event.type) {
       case HttpEventType.UploadProgress: {
         this.handleUploadEvent(event.loaded, event.total);
@@ -91,8 +91,8 @@ export class HomePage {
         break;
       }
       case HttpEventType.Response: {
-        if (event.body && event.body.segmentedImage && event.body.serialID) {
-          this.originalImage = src;
+        if (event.body && event.body.segmentedImage && event.body.serialID && event.body.originalImage) {
+          this.originalImage = event.body.originalImage;
           this.segmentedImage = event.body.segmentedImage;
           this.serialID = event.body.serialID;
           this.dismissLoading();
