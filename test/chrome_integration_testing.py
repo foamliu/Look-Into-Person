@@ -52,7 +52,7 @@ except NoSuchElementException:
 
 processedImage = driver.find_element_by_xpath('//*[@id="processedImage"]')
 action = ActionChains(driver)
-action.move_to_element(processedImage).move_by_offset(5, 5).click().perform()  # outline color gets selected
+action.move_to_element(processedImage).move_by_offset(5, -5).click().perform()  # outline color gets selected
 time.sleep(10)
 driver.find_element_by_xpath('//*[@id="container"]/div/ion-button').click()
 time.sleep(5)
