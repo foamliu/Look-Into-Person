@@ -13,7 +13,8 @@ def add_pixels(img):
     if h == 320 and w == 320:
         return img
 
-    if 320 - h >= 0:
+    if 320 - h > 0:
+        print('hit height')
         border_size = 320 - h
         border = cv2.copyMakeBorder(
             img,
@@ -25,7 +26,8 @@ def add_pixels(img):
             value=[255, 255, 255]
         )
 
-    if 320 - w >= 0:
+    if 320 - w > 0:
+        print('hit width')
         border_size = 320 - w
         border = cv2.copyMakeBorder(
             img,
