@@ -6,7 +6,7 @@ from flask import send_from_directory, send_file, request, json, after_this_requ
 from app import app
 from app.process.segnet.segment import img_process
 from app.tools.dirs import save_upload, save_processed, get_original, get_segmented, save_processed_outlined, \
-    save_upload_outlined, create_zip, cleanup
+    save_upload_outlined, create_zip, cleanup, allowed_file
 from app.process.outline import *
 from app.process.base64conversion import *
 from PIL import Image
@@ -22,19 +22,23 @@ def index():
 @app.route('/segment', methods=['POST'])
 def upload_file():
     b64_string = request.form['image']
+    original_filename = request.form['fileName']
 
     serial_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
     filename = serial_id + '.png'
     image = from_base64(b64_string)
 
-    file_info = save_upload(image, filename)
-    img_data = img_process(file_info[0])
-    pro_img = save_processed(img_data, file_info[1])
-    imgOriginal = get_original(serial_id)
+    if allowed_file(original_filename):
+        file_info = save_upload(image, filename)
+        img_data = img_process(file_info[0])
+        pro_img = save_processed(img_data, file_info[1])
+        imgOriginal = get_original(serial_id)
 
-    processed_base64 = to_base64(pro_img)
-    original_base64 = to_base64(imgOriginal)
-    return json.jsonify(segmentedImage=get_html(processed_base64), serialID=serial_id, originalImage=get_html(original_base64))
+        processed_base64 = to_base64(pro_img)
+        original_base64 = to_base64(imgOriginal)
+        return json.jsonify(segmentedImage=get_html(processed_base64), serialID=serial_id, originalImage=get_html(original_base64))
+    else:
+        return 'Incompatible File'
 
 
 @app.route('/outline', methods=['POST'])

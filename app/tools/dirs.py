@@ -20,17 +20,15 @@ def allowed_file(filename):
 
 
 def save_upload(image_data, filename):
-    if allowed_file(filename):
-        filename = secure_filename(filename)
-        curr_img_path = join(UPLOAD_FOLDER, filename)
-        if isdir(UPLOAD_FOLDER):
-            cv2.imwrite(curr_img_path, image_data)
-        else:
-            makedirs(UPLOAD_FOLDER)
-            cv2.imwrite(curr_img_path, image_data)
-        return [curr_img_path, filename]
+    filename = secure_filename(filename)
+    curr_img_path = join(UPLOAD_FOLDER, filename)
+    if isdir(UPLOAD_FOLDER):
+        cv2.imwrite(curr_img_path, image_data)
     else:
-        return 'Incompatible File'
+        makedirs(UPLOAD_FOLDER)
+        cv2.imwrite(curr_img_path, image_data)
+    return [curr_img_path, filename]
+
 
 
 def save_processed(img_data, img_name):
