@@ -1,7 +1,5 @@
 from app.process.segnet.segment import img_process
-from app.tools.dirs import save_upload
 from os.path import join, dirname, realpath, split
-from PIL import Image
 
 base_path = split(dirname(realpath(__file__)))
 

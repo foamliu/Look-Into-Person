@@ -4,14 +4,11 @@ import cv2.cv2 as cv2
 import pytest
 import os
 from PIL import Image
+from app.tools.dirs import UPLOAD_FOLDER, PROCESSED_FOLDER, ZIPPED_FOLDER, ALLOWED_EXTENSIONS
 
-base_path = split(dirname(realpath(__file__)))
-UPLOAD_FOLDER = join(base_path[0], 'app/img/uploads')
-PROCESSED_FOLDER = join(base_path[0], 'app/img/processed')
-ZIPPED_FOLDER = join(base_path[0], 'app/img/zipped')
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp'}
+test_base_path = split(dirname(realpath(__file__)))
 
-TEST_FOLDER = join(base_path[0], 'test', 'test_dirs_support')
+TEST_FOLDER = join(test_base_path[0], 'test', 'test_dirs_support')
 ORIGINAL_TEST_IMAGE_FILE = 'test1Orig.png'
 SEGMENTED_TEST_IMAGE_FILE = 'test1Segmented.png'
 OUTLINED_TEST_IMAGE_FILE = 'test1Outlined.png'
@@ -21,7 +18,6 @@ OUTLINED_TEST_IMAGE_FILE = 'test1Outlined.png'
 def setup_test_image():
     image = cv2.imread(TEST_FOLDER + "/" + ORIGINAL_TEST_IMAGE_FILE)
     save_upload(image, "1234.png")
-    files = os.listdir(UPLOAD_FOLDER)
 
 
 @pytest.fixture(scope='session', autouse=True)
@@ -57,7 +53,7 @@ def test_save_processed():
     assert "1234.png" in files
 
 
-def test_get_original(setup_test_image):
+def test_get_original():
     img = get_original('1234')
     assert img != 'original image not found'
 
@@ -72,7 +68,7 @@ def test_cleanup():
 def test_save_processed_outlined():
     image = Image.open(TEST_FOLDER + "/" + ORIGINAL_TEST_IMAGE_FILE)
     save_processed_outlined("1234.png", image)
-    files = os.listdir(join(base_path[0], 'app/img/processed/outlined'))
+    files = os.listdir(join(test_base_path[0], 'app/img/processed/outlined'))
     isPresent = "1234.png" in files
     print(files)
     assert isPresent
@@ -80,14 +76,13 @@ def test_save_processed_outlined():
 def test_save_upload_outlined():
     image = Image.open(TEST_FOLDER + "/" + ORIGINAL_TEST_IMAGE_FILE)
     save_upload_outlined("1234.png", image)
-    files = os.listdir(join(base_path[0], 'app/img/uploads/outlined'))
+    files = os.listdir(join(test_base_path[0], 'app/img/uploads/outlined'))
     isPresent = "1234.png" in files
     print(files)
     assert isPresent
 
 
 def test_create_zip():
-    #create_zip(serial_id, file_list)
     imgOriginal = cv2.imread(TEST_FOLDER + "/" + ORIGINAL_TEST_IMAGE_FILE)
     save_upload(imgOriginal, "1234.png")
 

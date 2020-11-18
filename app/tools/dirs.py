@@ -11,7 +11,7 @@ OUTLINED_UPLOAD_FOLDER = join(base_path[0], 'img', 'uploads', 'outlined')
 PROCESSED_FOLDER = join(base_path[0], 'img', 'processed')
 OUTLINED_PROCESSED_FOLDER = join(base_path[0], 'img', 'processed', 'outlined')
 ZIPPED_FOLDER = join(base_path[0], 'img', 'zipped')
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'bmp'}
 
 
 def allowed_file(filename):
