@@ -49,7 +49,8 @@ describe('DownloadComponent', () => {
     });
   }));
 
-  test('Should initialize the form on initialization', () => {
+  // This test checks that we have the right download options available when the download modal is opened
+  test('Should initialize the form on page initialization', () => {
     component.initializeForm();
     expect(component.formArr.value).toEqual(
       component.downloadOptions.map((option) => {
@@ -60,23 +61,26 @@ describe('DownloadComponent', () => {
     );
   });
 
-  test('Should increase the number of checked boxes', () => {
-    component.numberChecked = 1;
+  // These tests check that clicking on a download option either checks or unchecks the box
+  describe('Keeping track of how many options are selected', () => {
+    beforeEach(() => (component.numberChecked = 1));
 
-    component.onCheckboxChange({ detail: { checked: true } });
+    test('Should increase the number of checked boxes', () => {
+      component.onCheckboxChange({ detail: { checked: true } });
 
-    expect(component.numberChecked).toBe(2);
+      expect(component.numberChecked).toBe(2);
+    });
+
+    test('Should increase the number of checked boxes', () => {
+      component.onCheckboxChange({ detail: { checked: false } });
+
+      expect(component.numberChecked).toBe(0);
+    });
   });
 
-  test('Should increase the number of checked boxes', () => {
-    component.numberChecked = 1;
-
-    component.onCheckboxChange({ detail: { checked: false } });
-
-    expect(component.numberChecked).toBe(0);
-  });
-
-  describe('download()', () => {
+  // These tests check the flow for constructing the request form for downloading the image ZIP
+  // as well as error handling for a failed download
+  describe('Downloading images', () => {
     let expectedForm;
     beforeEach(() => {
       jest.spyOn(component, 'showLoading').mockImplementation();
@@ -112,7 +116,8 @@ describe('DownloadComponent', () => {
     });
   });
 
-  describe('handleDownloadResponse()', () => {
+  // These tests check the flow for handling the response from the /download API
+  describe('Handling the response for calling the download API', () => {
     beforeEach(() => jest.spyOn(component, 'promptForDownload').mockImplementation());
 
     test('Should handle a DownloadProgress event when downloading a ZIP', () => {

@@ -59,6 +59,7 @@ describe('HomePage', () => {
     jest.spyOn(component, 'dismissLoading').mockImplementation();
   }));
 
+  // This test checks that the hidden button implemented for Selenium works properly
   test('Should simulate the upload functionality with a static image', fakeAsync(() => {
     jest.spyOn(component, 'uploadImage').mockImplementation();
 
@@ -69,6 +70,7 @@ describe('HomePage', () => {
     expect(component.uploadImage).toHaveBeenCalledWith(Dress, 'dress.png');
   }));
 
+  // This test checks that we reset the progress tracker whenever we close the loading modal
   test('Should reset upload/download progress when dismissing loading', () => {
     jest.spyOn(component, 'dismissLoading').mockRestore();
 
@@ -78,112 +80,119 @@ describe('HomePage', () => {
     expect(imageService.resetProgress).toHaveBeenCalled();
   });
 
-  test('Should change the segnet section color when clicking a segmented image', () => {
-    jest.spyOn(component, 'getPixelData').mockReturnValue([85, 0, 0, 255]);
-    jest.spyOn(component, 'convertFromRGBAToHex').mockImplementation();
-    component.segmentedImageWithOutline = '';
+  // These tests check that clicking on the segmented image specifies the desired outline color (in hexadecimal)
+  describe('Clicking on the segmented image to pick an outline color', () => {
+    test('Should change the segnet section color when clicking a segmented image', () => {
+      jest.spyOn(component, 'getPixelData').mockReturnValue([85, 0, 0, 255]);
+      jest.spyOn(component, 'convertFromRGBAToHex').mockImplementation();
+      component.segmentedImageWithOutline = '';
 
-    component.onProcessedImageClick('mockClickEvent');
+      component.onProcessedImageClick('mockClickEvent');
 
-    expect(component.getPixelData).toHaveBeenCalledWith('mockClickEvent');
-    expect(component.convertFromRGBAToHex).toHaveBeenCalledWith([85, 0, 0, 255]);
-  });
-
-  test('Should do nothing when clicking on a segmented image that is outlined', () => {
-    jest.spyOn(component, 'getPixelData').mockImplementation();
-    jest.spyOn(component, 'convertFromRGBAToHex').mockImplementation();
-    component.segmentedImageWithOutline = 'segWithOutline';
-
-    component.onProcessedImageClick('mockClickEvent');
-
-    expect(component.getPixelData).not.toHaveBeenCalled();
-    expect(component.convertFromRGBAToHex).not.toHaveBeenCalled();
-  });
-
-  test('Should convert an RGBA pixel to a hex representation for 1 digit hex strings', () => {
-    jest.spyOn(component, 'convertFromRGBAToHex');
-
-    component.convertFromRGBAToHex([10, 5, 15, 255]);
-
-    expect(component.convertFromRGBAToHex).toReturnWith('#0a050f');
-  });
-
-  test('Should convert an RGBA pixel to a hex representation for 2 digit hex strings', () => {
-    jest.spyOn(component, 'convertFromRGBAToHex');
-
-    component.convertFromRGBAToHex([17, 153, 255, 255]);
-
-    expect(component.convertFromRGBAToHex).toReturnWith('#1199ff');
-  });
-
-  test('Should upload an image and handle the response', () => {
-    jest.spyOn(component, 'handleResponseForUploadImage');
-
-    component.uploadImage(event.target.result, file.name);
-    expect(component.handleResponseForUploadImage).toHaveBeenCalledWith(
-      new HttpResponse({
-        body: { segmentedImage: 'b64String' }
-      })
-    );
-  });
-
-  test('Should handle an upload event when uploading an image', () => {
-    jest.spyOn(component, 'handleUploadEvent').mockImplementation();
-
-    const httpEvent: HttpEvent<HttpEventType.UploadProgress> = {
-      type: HttpEventType.UploadProgress,
-      loaded: 25,
-      total: 100
-    };
-
-    component.handleResponseForUploadImage(httpEvent);
-    expect(component.handleUploadEvent).toHaveBeenCalledWith(25, 100);
-  });
-
-  test('Should handle a download event when uploading an image', () => {
-    jest.spyOn(component, 'handleDownloadEvent').mockImplementation();
-
-    const httpEvent: HttpEvent<HttpEventType.DownloadProgress> = {
-      type: HttpEventType.DownloadProgress,
-      loaded: 87,
-      total: 100
-    };
-
-    component.handleResponseForUploadImage(httpEvent);
-    expect(component.handleDownloadEvent).toHaveBeenCalledWith(87, 100);
-  });
-
-  test('Should handle an HttpResponse when uploading an image', () => {
-    const response = new HttpResponse({
-      body: { segmentedImage: 'b64String', serialID: 'FrostedFlakes', originalImage: 'resizedOriginal' }
+      expect(component.getPixelData).toHaveBeenCalledWith('mockClickEvent');
+      expect(component.convertFromRGBAToHex).toHaveBeenCalledWith([85, 0, 0, 255]);
     });
 
-    component.handleResponseForUploadImage(response);
-    expect(component.originalImage).toEqual('resizedOriginal');
-    expect(component.segmentedImage).toEqual('b64String');
-    expect(component.serialID).toEqual('FrostedFlakes');
-    expect(component.dismissLoading).toHaveBeenCalled();
-  });
+    test('Should do nothing when clicking on a segmented image that is outlined', () => {
+      jest.spyOn(component, 'getPixelData').mockImplementation();
+      jest.spyOn(component, 'convertFromRGBAToHex').mockImplementation();
+      component.segmentedImageWithOutline = 'segWithOutline';
 
-  test('Should handle an error on upload when we do not get the expected response', () => {
-    const response = new HttpResponse({
-      body: { finalImage: 'b64String' }
+      component.onProcessedImageClick('mockClickEvent');
+
+      expect(component.getPixelData).not.toHaveBeenCalled();
+      expect(component.convertFromRGBAToHex).not.toHaveBeenCalled();
     });
 
-    component.handleResponseForUploadImage(response);
-    expect(component.originalImage).toBe('');
-    expect(component.segmentedImage).toBe('');
-    expect(imageService.handleError).toHaveBeenCalledWith(UploadErrorMessage);
+    test('Should convert an RGBA pixel to a hex representation for 1 digit hex strings', () => {
+      jest.spyOn(component, 'convertFromRGBAToHex');
+
+      component.convertFromRGBAToHex([10, 5, 15, 255]);
+
+      expect(component.convertFromRGBAToHex).toReturnWith('#0a050f');
+    });
+
+    test('Should convert an RGBA pixel to a hex representation for 2 digit hex strings', () => {
+      jest.spyOn(component, 'convertFromRGBAToHex');
+
+      component.convertFromRGBAToHex([17, 153, 255, 255]);
+
+      expect(component.convertFromRGBAToHex).toReturnWith('#1199ff');
+    });
   });
 
-  test('Should call the handleError() method when upload fails', () => {
-    jest.spyOn(imageService, 'uploadImage').mockReturnValue(throwError('error'));
+  // These tests check the flow involved with calling the /segment API
+  describe('Requesting a segmented image', () => {
+    test('Should upload an image and handle the response', () => {
+      jest.spyOn(component, 'handleResponseForUploadImage');
 
-    component.uploadImage(event.target.result, file.name);
+      component.uploadImage(event.target.result, file.name);
+      expect(component.handleResponseForUploadImage).toHaveBeenCalledWith(
+        new HttpResponse({
+          body: { segmentedImage: 'b64String' }
+        })
+      );
+    });
 
-    expect(imageService.handleError).toHaveBeenCalledWith(UploadErrorMessage);
+    test('Should handle an upload event when uploading an image', () => {
+      jest.spyOn(component, 'handleUploadEvent').mockImplementation();
+
+      const httpEvent: HttpEvent<HttpEventType.UploadProgress> = {
+        type: HttpEventType.UploadProgress,
+        loaded: 25,
+        total: 100
+      };
+
+      component.handleResponseForUploadImage(httpEvent);
+      expect(component.handleUploadEvent).toHaveBeenCalledWith(25, 100);
+    });
+
+    test('Should handle a download event when uploading an image', () => {
+      jest.spyOn(component, 'handleDownloadEvent').mockImplementation();
+
+      const httpEvent: HttpEvent<HttpEventType.DownloadProgress> = {
+        type: HttpEventType.DownloadProgress,
+        loaded: 87,
+        total: 100
+      };
+
+      component.handleResponseForUploadImage(httpEvent);
+      expect(component.handleDownloadEvent).toHaveBeenCalledWith(87, 100);
+    });
+
+    test('Should handle an HttpResponse when uploading an image', () => {
+      const response = new HttpResponse({
+        body: { segmentedImage: 'b64String', serialID: 'FrostedFlakes', originalImage: 'resizedOriginal' }
+      });
+
+      component.handleResponseForUploadImage(response);
+      expect(component.originalImage).toEqual('resizedOriginal');
+      expect(component.segmentedImage).toEqual('b64String');
+      expect(component.serialID).toEqual('FrostedFlakes');
+      expect(component.dismissLoading).toHaveBeenCalled();
+    });
+
+    test('Should handle an error on upload when we do not get the expected response', () => {
+      const response = new HttpResponse({
+        body: { finalImage: 'b64String' }
+      });
+
+      component.handleResponseForUploadImage(response);
+      expect(component.originalImage).toBe('');
+      expect(component.segmentedImage).toBe('');
+      expect(imageService.handleError).toHaveBeenCalledWith(UploadErrorMessage);
+    });
+
+    test('Should call the handleError() method when upload fails', () => {
+      jest.spyOn(imageService, 'uploadImage').mockReturnValue(throwError('error'));
+
+      component.uploadImage(event.target.result, file.name);
+
+      expect(imageService.handleError).toHaveBeenCalledWith(UploadErrorMessage);
+    });
   });
 
+  // These tests check the flow involved with calling the /outline API
   describe('requesting outlined images', () => {
     beforeEach(() => {
       component.segnetSectionColor = '#ff0099';
@@ -286,50 +295,54 @@ describe('HomePage', () => {
     }));
   });
 
-  test("Should show a label of 'Outlined Original Image' when there is an outline on the original", () => {
-    component.originalImage = 'original';
-    component.originalImageWithOutline = 'originalWithOutline';
+  // These tests check scenarios for showing different labels above the two images on the UI
+  describe('Labels to show above images on the UI', () => {
+    test("Should show a label of 'Outlined Original Image' when there is an outline on the original", () => {
+      component.originalImage = 'original';
+      component.originalImageWithOutline = 'originalWithOutline';
 
-    jest.spyOn(component, 'getLabelForOriginalImage');
+      jest.spyOn(component, 'getLabelForOriginalImage');
 
-    component.getLabelForOriginalImage();
+      component.getLabelForOriginalImage();
 
-    expect(component.getLabelForOriginalImage).toReturnWith(ImageLabel.OutlinedOriginal);
+      expect(component.getLabelForOriginalImage).toReturnWith(ImageLabel.OutlinedOriginal);
+    });
+
+    test("Should show a label of 'Original Image' when there is not an outline on the original", () => {
+      component.originalImage = 'original';
+      component.originalImageWithOutline = '';
+
+      jest.spyOn(component, 'getLabelForOriginalImage');
+
+      component.getLabelForOriginalImage();
+
+      expect(component.getLabelForOriginalImage).toReturnWith(ImageLabel.Original);
+    });
+
+    test("Should show a label of 'Outlined Segmented Image' when there is an outline on the segmented", () => {
+      component.segmentedImage = 'segmented';
+      component.segmentedImageWithOutline = 'segmentedOutlined';
+
+      jest.spyOn(component, 'getLabelForSegmentedImage');
+
+      component.getLabelForSegmentedImage();
+
+      expect(component.getLabelForSegmentedImage).toReturnWith(ImageLabel.OutlinedSegmented);
+    });
+
+    test("Should show a label of 'Segmented Image' when there is not an outline on the segmented", () => {
+      component.segmentedImage = 'segmented';
+      component.segmentedImageWithOutline = '';
+
+      jest.spyOn(component, 'getLabelForSegmentedImage');
+
+      component.getLabelForSegmentedImage();
+
+      expect(component.getLabelForSegmentedImage).toReturnWith(ImageLabel.Segmented);
+    });
   });
 
-  test("Should show a label of 'Original Image' when there is not an outline on the original", () => {
-    component.originalImage = 'original';
-    component.originalImageWithOutline = '';
-
-    jest.spyOn(component, 'getLabelForOriginalImage');
-
-    component.getLabelForOriginalImage();
-
-    expect(component.getLabelForOriginalImage).toReturnWith(ImageLabel.Original);
-  });
-
-  test("Should show a label of 'Outlined Segmented Image' when there is an outline on the segmented", () => {
-    component.segmentedImage = 'segmented';
-    component.segmentedImageWithOutline = 'segmentedOutlined';
-
-    jest.spyOn(component, 'getLabelForSegmentedImage');
-
-    component.getLabelForSegmentedImage();
-
-    expect(component.getLabelForSegmentedImage).toReturnWith(ImageLabel.OutlinedSegmented);
-  });
-
-  test("Should show a label of 'Segmented Image' when there is not an outline on the segmented", () => {
-    component.segmentedImage = 'segmented';
-    component.segmentedImageWithOutline = '';
-
-    jest.spyOn(component, 'getLabelForSegmentedImage');
-
-    component.getLabelForSegmentedImage();
-
-    expect(component.getLabelForSegmentedImage).toReturnWith(ImageLabel.Segmented);
-  });
-
+  // These tests check whether we are displaying the outlined or unoutlined images, depending on what is available
   describe('Getting image string to display', () => {
     beforeEach(() => {
       (component.originalImage = 'original'), (component.segmentedImage = 'segmented');
@@ -376,66 +389,70 @@ describe('HomePage', () => {
     });
   });
 
-  test('Should open a download modal and handle the response', fakeAsync(() => {
-    jest.spyOn(component, 'handleDismissForDownloadModal').mockImplementation();
-    component.serialID = 'Trix';
+  // These tests check what happens when the user opens the download modal and how we handle closing it
+  // (i.e. whether the user clicked download or cancelled out)
+  describe('Interacting with the download modal', () => {
+    test('Should open a download modal and handle the response', fakeAsync(() => {
+      jest.spyOn(component, 'handleDismissForDownloadModal').mockImplementation();
+      component.serialID = 'Trix';
 
-    component.download();
-    tick();
+      component.download();
+      tick();
 
-    expect(modalCtrl.create).toHaveBeenCalledWith({
-      component: DownloadComponent,
-      componentProps: { serialID: 'Trix' }
+      expect(modalCtrl.create).toHaveBeenCalledWith({
+        component: DownloadComponent,
+        componentProps: { serialID: 'Trix' }
+      });
+
+      expect(component.handleDismissForDownloadModal).toHaveBeenCalledWith({ data: 'mockData' });
+    }));
+
+    test('Should handle a successful download by resetting the class variables', () => {
+      component.outlineColor = 'mockOutlineColor';
+      component.outlineThickness = '1';
+      component.segnetSectionColor = 'mockSegnetSectionColor';
+      component.serialID = 'Trix';
+      component.originalImage = 'original';
+      component.segmentedImage = 'segment';
+      component.originalImageWithOutline = 'originalOutline';
+      component.segmentedImageWithOutline = 'segmentOutline';
+
+      component.handleDismissForDownloadModal({ data: true });
+
+      expect(component.outlineColor).toEqual(White);
+      expect(component.outlineThickness).toEqual(DefaultOutlineThickness);
+      expect(component.segnetSectionColor).toBeUndefined();
+      expect(component.serialID).toBeUndefined();
+      expect(component.originalImage).toEqual('');
+      expect(component.segmentedImage).toEqual('');
+      expect(component.originalImageWithOutline).toEqual('');
+      expect(component.segmentedImageWithOutline).toEqual('');
+      expect(imageService.showSuccessfulDownload).toHaveBeenCalled();
+      expect(component.dismissLoading).toHaveBeenCalled();
     });
 
-    expect(component.handleDismissForDownloadModal).toHaveBeenCalledWith({ data: 'mockData' });
-  }));
+    test('Should not reset class variables if the download modal is dismissed without success', () => {
+      component.outlineColor = 'mockOutlineColor';
+      component.outlineThickness = '1';
+      component.segnetSectionColor = 'mockSegnetSectionColor';
+      component.serialID = 'Trix';
+      component.originalImage = 'original';
+      component.segmentedImage = 'segment';
+      component.originalImageWithOutline = 'originalOutline';
+      component.segmentedImageWithOutline = 'segmentOutline';
 
-  test('Should handle a successful download by resetting the class variables', () => {
-    component.outlineColor = 'mockOutlineColor';
-    component.outlineThickness = '1';
-    component.segnetSectionColor = 'mockSegnetSectionColor';
-    component.serialID = 'Trix';
-    component.originalImage = 'original';
-    component.segmentedImage = 'segment';
-    component.originalImageWithOutline = 'originalOutline';
-    component.segmentedImageWithOutline = 'segmentOutline';
+      component.handleDismissForDownloadModal({ data: undefined });
 
-    component.handleDismissForDownloadModal({ data: true });
-
-    expect(component.outlineColor).toEqual(White);
-    expect(component.outlineThickness).toEqual(DefaultOutlineThickness);
-    expect(component.segnetSectionColor).toBeUndefined();
-    expect(component.serialID).toBeUndefined();
-    expect(component.originalImage).toEqual('');
-    expect(component.segmentedImage).toEqual('');
-    expect(component.originalImageWithOutline).toEqual('');
-    expect(component.segmentedImageWithOutline).toEqual('');
-    expect(imageService.showSuccessfulDownload).toHaveBeenCalled();
-    expect(component.dismissLoading).toHaveBeenCalled();
-  });
-
-  test('Should not reset class variables if the download modal is dismissed without success', () => {
-    component.outlineColor = 'mockOutlineColor';
-    component.outlineThickness = '1';
-    component.segnetSectionColor = 'mockSegnetSectionColor';
-    component.serialID = 'Trix';
-    component.originalImage = 'original';
-    component.segmentedImage = 'segment';
-    component.originalImageWithOutline = 'originalOutline';
-    component.segmentedImageWithOutline = 'segmentOutline';
-
-    component.handleDismissForDownloadModal({ data: undefined });
-
-    expect(component.outlineColor).toEqual('mockOutlineColor');
-    expect(component.outlineThickness).toEqual('1');
-    expect(component.segnetSectionColor).toEqual('mockSegnetSectionColor');
-    expect(component.serialID).toEqual('Trix');
-    expect(component.originalImage).toEqual('original');
-    expect(component.segmentedImage).toEqual('segment');
-    expect(component.originalImageWithOutline).toEqual('originalOutline');
-    expect(component.segmentedImageWithOutline).toEqual('segmentOutline');
-    expect(imageService.showSuccessfulDownload).not.toHaveBeenCalled();
-    expect(component.dismissLoading).not.toHaveBeenCalled();
+      expect(component.outlineColor).toEqual('mockOutlineColor');
+      expect(component.outlineThickness).toEqual('1');
+      expect(component.segnetSectionColor).toEqual('mockSegnetSectionColor');
+      expect(component.serialID).toEqual('Trix');
+      expect(component.originalImage).toEqual('original');
+      expect(component.segmentedImage).toEqual('segment');
+      expect(component.originalImageWithOutline).toEqual('originalOutline');
+      expect(component.segmentedImageWithOutline).toEqual('segmentOutline');
+      expect(imageService.showSuccessfulDownload).not.toHaveBeenCalled();
+      expect(component.dismissLoading).not.toHaveBeenCalled();
+    });
   });
 });
