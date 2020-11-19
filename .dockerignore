@@ -5,5 +5,4 @@ node_modules
 .idea
 dist
 app/img
-app/process/segnet
 web/node_modules
