@@ -240,7 +240,6 @@ app/img/uploads/
 myenv/
 app/img
 app/segment
-app/process/segnet/
 Scripts/
 bootstrap.*
 newenv/
