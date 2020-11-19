@@ -25,11 +25,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /usr/src/app/automatic-apparel-outliner
 COPY . .
 
-# Change working directory to the project, clone SegNet, and install dependencies
-RUN git clone https://github.com/sloanlipman/Look-Into-Person.git ./app/process/segnet && \
-    for req in $(cat ./requirements.txt) pydot; do pip3 install $req; done && \
-    for req in $(cat ./app/process/segnet/requirements.txt) pydot; do pip3 install $req; done
-
+# Change working directory to the project and install dependencies
+RUN for req in $(cat ./requirements.txt) pydot; do pip3 install $req; done
 # Get the model
 RUN mkdir ./app/process/segnet/models
 RUN wget https://github.com/sloanlipman/Look-Into-Person/releases/download/v1.1/model.11-0.8409.hdf5 && mv model.11-0.8409.hdf5 ./app/process/segnet/models/

@@ -9,3 +9,7 @@ PyJWT==1.7.1
 six==1.15.0
 Werkzeug==1.0.1
 opencv-python-headless==4.4.0.46
+numpy==1.18.5
+tensorflow==2.3.1
+scipy~=1.5.2
+Pillow==7.2.0
