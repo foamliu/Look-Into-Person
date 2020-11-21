@@ -80,6 +80,39 @@ describe('HomePage', () => {
     expect(imageService.resetProgress).toHaveBeenCalled();
   });
 
+  // These tests check what happens when a file is added
+  describe('onFilesAdded() function', () => {
+    beforeEach(() => {
+      jest.spyOn(component, 'showLoading').mockImplementation();
+      jest.spyOn(component, 'uploadImage');
+      jest.spyOn(FileReader.prototype, 'addEventListener').mockImplementation();
+      jest.spyOn(FileReader.prototype, 'readAsDataURL').mockImplementation();
+    });
+
+    test('Should do nothing if there is no file present', () => {
+      component.file = undefined;
+      component.onFilesAdded();
+
+      expect(component.showLoading).not.toHaveBeenCalled();
+      expect(FileReader.prototype.addEventListener).not.toHaveBeenCalled();
+      expect(FileReader.prototype.readAsDataURL).not.toHaveBeenCalledWith(file);
+    });
+    test('Should handle a file upload', fakeAsync(() => {
+      component.file = {
+        nativeElement: {
+          files: [file]
+        }
+      } as any;
+
+      component.onFilesAdded();
+      tick();
+
+      expect(component.showLoading).toHaveBeenCalled();
+      expect(FileReader.prototype.addEventListener).toHaveBeenCalled();
+      expect(FileReader.prototype.readAsDataURL).toHaveBeenCalledWith(file);
+    }));
+  });
+
   // These tests check that clicking on the segmented image specifies the desired outline color (in hexadecimal)
   describe('Clicking on the segmented image to pick an outline color', () => {
     test('Should change the segnet section color when clicking a segmented image', () => {
@@ -295,6 +328,38 @@ describe('HomePage', () => {
     }));
   });
 
+  // These tests check whether we should enable the Outline button
+
+  describe('readyToOutline() function', () => {
+    beforeEach(() => jest.spyOn(component, 'readyToOutline'));
+    test('Should not be ready to outline if there is no specified outline color', () => {
+      component.outlineColor = '';
+      component.segnetSectionColor = '#ff0099';
+
+      component.readyToOutline();
+
+      expect(component.readyToOutline).toReturnWith(false);
+    });
+
+    test('Should not be ready to outline if there is no section color', () => {
+      component.outlineColor = '#ffffff';
+      component.segnetSectionColor = '';
+
+      component.readyToOutline();
+
+      expect(component.readyToOutline).toReturnWith(false);
+    });
+
+    test('Should be ready to outline when all parameters are specified', () => {
+      component.outlineColor = '#ffffff';
+      component.segnetSectionColor = 'ff0099';
+
+      component.readyToOutline();
+
+      expect(component.readyToOutline).toReturnWith(true);
+    });
+  });
+
   // These tests check scenarios for showing different labels above the two images on the UI
   describe('Labels to show above images on the UI', () => {
     test("Should show a label of 'Outlined Original Image' when there is an outline on the original", () => {
@@ -348,6 +413,14 @@ describe('HomePage', () => {
       (component.originalImage = 'original'), (component.segmentedImage = 'segmented');
     });
 
+    test('Should not return anything for the original image when there is not one', () => {
+      component.originalImage = '';
+
+      const image = component.getImageStringForOriginalImage();
+
+      expect(image).toBeUndefined();
+    });
+
     test('Should return the original image with outline when present', () => {
       component.originalImageWithOutline = 'outlinedOriginal';
 
@@ -366,6 +439,14 @@ describe('HomePage', () => {
       component.getImageStringForOriginalImage();
 
       expect(component.getImageStringForOriginalImage).toReturnWith('original');
+    });
+
+    test('Should not return anything for the segmented image when there is not one', () => {
+      component.segmentedImage = '';
+
+      const image = component.getImageStringForSegmentedImage();
+
+      expect(image).toBeUndefined();
     });
 
     test('Should return the segmented image with outline when present', () => {
