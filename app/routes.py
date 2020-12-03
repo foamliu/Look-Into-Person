@@ -6,7 +6,7 @@ from flask import send_from_directory, send_file, request, json, after_this_requ
 from app import app
 from app.process.segnet.segment import img_process
 from app.tools.dirs import save_upload, save_processed, get_original, get_segmented, save_processed_outlined, \
-    save_upload_outlined, create_zip, cleanup, allowed_file, getUserGuidePath
+    save_upload_outlined, create_zip, cleanup, allowed_file
 from app.process.outline import *
 from app.process.base64conversion import *
 from PIL import Image
