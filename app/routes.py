@@ -6,7 +6,7 @@ from flask import send_from_directory, send_file, request, json, after_this_requ
 from app import app
 from app.process.segnet.segment import img_process
 from app.tools.dirs import save_upload, save_processed, get_original, get_segmented, save_processed_outlined, \
-    save_upload_outlined, create_zip, cleanup, allowed_file
+    save_upload_outlined, create_zip, cleanup, allowed_file, getUserGuidePath
 from app.process.outline import *
 from app.process.base64conversion import *
 from PIL import Image
@@ -31,6 +31,7 @@ def upload_file():
     if allowed_file(original_filename):
         file_info = save_upload(image, filename)
         img_data = img_process(file_info[0])
+        img_data=''
         pro_img = save_processed(img_data, file_info[1])
         imgOriginal = get_original(serial_id)
 
@@ -86,6 +87,9 @@ def download():
 
     return send_file(zip_path, attachment_filename=serial_id + '.zip')
 
+@app.route('/help', methods=['GET'])
+def user_guide():
+    return send_file('help.pdf' , as_attachment=True)
 
 @app.route('/<path:path>')
 def send_js(path):
